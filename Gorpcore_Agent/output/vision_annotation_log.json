@@ -1,0 +1,10 @@
+{
+  "node": "Node B - Vision-LLM Annotator",
+  "model": "qwen-vl-max",
+  "total_candidates": 3,
+  "annotated_count": 3,
+  "skipped_existing": 0,
+  "error_count": 0,
+  "json_label_dir": "E:\\code\\Project\\Gorpcore_Agent\\output\\json_labels",
+  "annotation_errors_csv": "E:\\code\\Project\\Gorpcore_Agent\\output\\annotation_errors.csv"
+}

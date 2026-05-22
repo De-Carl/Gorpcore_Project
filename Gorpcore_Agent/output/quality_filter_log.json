@@ -1,0 +1,16 @@
+{
+  "node": "Node A - Quality Gatekeeper",
+  "version": "local_rule_based_v1",
+  "description": "本版本使用本地规则完成基础质量门控，包括文件存在性、图片可读性、尺寸、宽高比和疑似重复检测。完整/半身 Outfit、文本截图、风景图、营销图等细粒度分类建议在后续版本中接入 Qwen-VL-Max 或 CLIP。",
+  "total_images": 128,
+  "passed": 110,
+  "rejected": 18,
+  "image_type_breakdown": {
+    "candidate_outfit": 110,
+    "duplicate": 18
+  },
+  "rejection_breakdown": {
+    "near_duplicate_image": 18
+  },
+  "output_csv": "E:\\code\\Project\\Gorpcore_Agent\\output\\quality_filtered_images.csv"
+}
