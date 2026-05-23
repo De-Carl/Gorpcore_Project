@@ -122,7 +122,7 @@ def resolve_image_path(relative_path: str) -> Path:
 
 def build_image_id(note_id: str, image_index: int) -> str:
     """
-    为每张图片生成稳定的唯一 Image_ID。
+    为每张图片生成稳定的唯一 Image_ID。 
 
     命名规则：
         GRP-XHS-{note_id}-{两位图片序号}
