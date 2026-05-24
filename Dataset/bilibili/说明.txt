@@ -1,1 +1,16 @@
 视频的评论和弹幕，包含一些预设的痛点
+
+1. 文件说明
+本目录用于保存 B 站机能风相关视频的采集脚本和结果数据，重点记录视频弹幕、高赞评论，以及人工预设的痛点表达。
+
+2. 数据结构
+bilibili_results.json 采用 JSON 对象结构，主要包含以下字段：
+summary: 汇总统计，包含 total_danmaku、pain_point_danmaku、total_comments、pain_point_comments。
+pain_point_keywords: 痛点关键词列表，例如“太热”“太重”“不实用”“性价比”等。
+high_like_pain_comments: 高赞痛点评论列表，按点赞数排序后保存。
+pain_point_danmaku: 被标记为痛点的弹幕列表。
+all_danmaku: 全部弹幕记录，每条包含 keyword、bvid、video_title、text、is_pain_point。
+all_comments: 全部评论记录，每条包含 keyword、bvid、video_title、text、like_count、is_pain_point。
+
+3. 使用方式
+可以直接用 Python 读取 bilibili_results.json，对弹幕和评论做情感分析、痛点归纳、关键词统计，或者结合高赞评论做用户反馈分析。

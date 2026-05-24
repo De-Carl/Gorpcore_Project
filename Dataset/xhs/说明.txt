@@ -1,27 +1,37 @@
 爬取的帖子和图片
 
 1. 文件结构说明
-xhs 文件夹是使用 Playwright 爬取小红书相关词条（如 #机能风穿搭, #Gorpcore）帖子及图片数据的存储和工作目录。主要结构如下：
-dataass1.py: 自动化爬虫脚本。基于 Playwright 编写，负责执行搜索、解析页面数据并下载图片。
+xhs 文件夹是使用 Playwright 爬取小红书相关词条（如 #机能风穿搭、#Gorpcore）帖子及图片数据的存储和工作目录。主要结构如下：
+xhs.py: 自动化爬虫脚本。基于 Playwright 编写，负责执行搜索、解析页面数据并下载图片。
 xiaohongshu_auth_state.json: 爬虫的本地持久化身份验证/Cookie 状态文件，用于保持登录状态，避免频繁要求扫码登录。
 xiaohongshu_with_images.json: 核心数据文件。经过处理的结构化帖子数据，包含帖子的全部元数据、正文文本以及本地已下载图片的相对路径映射。
 xiaohongshu_images/: 图片数据存放主目录。层级结构为 xiaohongshu_images/搜索关键词/帖子ID/具体图片文件（例如 .webp 格式），与核心数据文件中的路径一一对应。
 xiaohongshu_debug/: 包含原始的搜索 API JSON 返回负载（如 机能风穿搭_search_payloads.json），通常用于调试数据获取过程。
 说明.txt: 本说明文件本身。
 
-2. 数据格式 (xiaohongshu_with_images.json)
+2. 数据结构 (xiaohongshu_with_images.json)
 结构化数据采用 JSON 数组 的格式，数组中的每个对象代表一篇小红书笔记（帖子）。其主要包含以下重要字段：
 keyword: 搜索的源关键词（如 "#机能风穿搭"）。
 note_id: 笔记的唯一索引标识符（如 "697b27ff000000002103cb21"）。
-note_url / share_url: 笔记的网页端和分享链接。
+note_url: 笔记的网页端链接。
+share_url: 笔记的分享链接。
+xsec_token: 网页访问所需的 token。
+can_open_in_web: 是否支持直接网页打开。
 title_text: 笔记标题文本。
 raw_text: 笔记的完整正文文案（用于 NLP 分析）。
+text_source: 文本来源位置，通常为详情页。
 image_urls: 该笔记原图的各种外链地址数组。
 downloaded_image_paths: 重要所在，已保存到本地 xiaohongshu_images/ 目录下该笔记各配图的具体相对文件路径列表，方便实现图文匹配加载。
-publish_timestamp / publish_time_resolved: 帖子发布的时间戳及解析后的日期。
+publish_timestamp: 帖子发布的原始时间戳。
+publish_time_text: 页面上看到的发布时间文本。
+publish_time_resolved: 解析后的标准日期或日期时间字符串。
 
-3. 如何使用本数据集
+3. 图片目录结构
+本地图片按照“关键词 / 帖子ID / 图片文件”的方式保存，例如 xiaohongshu_images/机能风穿搭/697b27ff000000002103cb21/image_01.webp。
+这样可以直接通过 downloaded_image_paths 找到对应笔记的全部图片，便于图文一一对应。
+
+4. 如何使用本数据集
 数据分析/模型训练使用：
-可以使用 Python 的 json 模块读取 xiaohongshu_with_images.json，遍历数组提取每个帖子的 raw_text，并通过读取 downloaded_image_paths 字段中的路径加载关联的本地图像资源，可用于执行多模态分析、图片打标或过滤过滤分析。
+可以使用 Python 的 json 模块读取 xiaohongshu_with_images.json，遍历数组提取每个帖子的 raw_text，并通过读取 downloaded_image_paths 字段中的路径加载关联的本地图像资源，可用于执行多模态分析、图片打标或过滤分析。
 更新或继续爬取新数据：
-如果您需要获取最新数据或添加新的搜索关键词，可以直接编辑/运行 dataass1.py 脚本。
+如果您需要获取最新数据或添加新的搜索关键词，可以直接编辑/运行 xhs.py 脚本。
