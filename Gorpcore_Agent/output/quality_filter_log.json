@@ -2,15 +2,29 @@
   "node": "Node A - Quality Gatekeeper",
   "version": "local_rule_based_v1",
   "description": "本版本使用本地规则完成基础质量门控，包括文件存在性、图片可读性、尺寸、宽高比和疑似重复检测。完整/半身 Outfit、文本截图、风景图、营销图等细粒度分类建议在后续版本中接入 Qwen-VL-Max 或 CLIP。",
-  "total_images": 128,
-  "passed": 110,
-  "rejected": 18,
+  "total_images": 1077,
+  "passed": 930,
+  "rejected": 147,
   "image_type_breakdown": {
-    "candidate_outfit": 110,
-    "duplicate": 18
+    "candidate_outfit": 930,
+    "duplicate": 135,
+    "too_small": 1,
+    "landscape": 11
   },
   "rejection_breakdown": {
-    "near_duplicate_image": 18
+    "near_duplicate_image": 135,
+    "image_too_small": 1,
+    "landscape_person_too_small_nature_dominant: nature=0.914, green=0.000, blue=0.914, foreground=0.002, persons=1, total_person=0.007, max_person=0.007, max_conf=0.826": 1,
+    "landscape_no_person_nature_dominant: nature=0.445, green=0.338, blue=0.107, foreground=0.061, persons=0, total_person=0.000, max_person=0.000, max_conf=0.000": 1,
+    "landscape_no_person_nature_dominant: nature=0.656, green=0.603, blue=0.053, foreground=0.026, persons=0, total_person=0.000, max_person=0.000, max_conf=0.000": 1,
+    "landscape_person_too_small_nature_dominant: nature=0.786, green=0.101, blue=0.686, foreground=0.006, persons=1, total_person=0.002, max_person=0.002, max_conf=0.314": 1,
+    "landscape_no_person_nature_dominant: nature=0.523, green=0.523, blue=0.000, foreground=0.005, persons=0, total_person=0.000, max_person=0.000, max_conf=0.000": 1,
+    "landscape_no_person_nature_dominant: nature=0.467, green=0.467, blue=0.000, foreground=0.002, persons=0, total_person=0.000, max_person=0.000, max_conf=0.000": 1,
+    "landscape_no_person_nature_dominant: nature=0.851, green=0.212, blue=0.639, foreground=0.005, persons=0, total_person=0.000, max_person=0.000, max_conf=0.000": 1,
+    "landscape_no_person_nature_dominant: nature=0.350, green=0.077, blue=0.274, foreground=0.054, persons=0, total_person=0.000, max_person=0.000, max_conf=0.000": 1,
+    "landscape_person_too_small_nature_dominant: nature=0.747, green=0.024, blue=0.723, foreground=0.001, persons=1, total_person=0.003, max_person=0.003, max_conf=0.308": 1,
+    "landscape_no_person_nature_dominant: nature=0.486, green=0.002, blue=0.484, foreground=0.004, persons=0, total_person=0.000, max_person=0.000, max_conf=0.000": 1,
+    "landscape_no_person_nature_dominant: nature=0.871, green=0.000, blue=0.871, foreground=0.002, persons=0, total_person=0.000, max_person=0.000, max_conf=0.000": 1
   },
   "output_csv": "E:\\code\\Project\\Gorpcore_Agent\\output\\quality_filtered_images.csv"
 }

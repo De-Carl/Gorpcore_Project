@@ -1,118 +1,140 @@
 """
-Node A: Quality Gatekeeper 质量门控节点。
+Node A: Quality Gatekeeper.
 
-本节点目标：
-从 Dataset v0 的图片中筛选出适合进入后续视觉标注阶段的候选图像。
+Objective of this node:
+Filter candidate images suitable for the subsequent visual annotation stage from Dataset v0 images.
 
-根据项目文档和课程要求，Node A 需要完成：
+According to project documents and course requirements, Node A needs to complete:
 
-1. 读取 Dataset v0 图像
-2. 保留完整/半身 Outfit 图片
-3. 删除文本截图、风景图和营销重复
-4. 输出 quality_filtered_images.csv
-5. 输出日志文件，记录过滤条目数量和类型
+1. Read Dataset v0 images
+2. Keep full-body/half-body Outfit images
+3. Remove text screenshots, landscape images, and marketing duplicates
+4. Output quality_filtered_images.csv
+5. Output a log file recording the number and types of filtered items
 
-当前版本说明：
-本脚本先实现“本地规则版”质量门控，不依赖外部 API。
-它可以稳定完成以下筛选：
+Current version notes:
+This script currently implements a "local rule-based" quality gatekeeper and does not rely on external APIs.
+It can stably complete the following filtering:
 
-- 文件不存在
-- 图片损坏
-- 图片尺寸过小
-- 图片宽高比异常
-- 疑似重复图片
+- File does not exist
+- Image is corrupted
+- Image size is too small
+- Abnormal image aspect ratio
+- Suspected duplicate images
 
-对于“完整/半身 Outfit、文本截图、风景图、营销图”的更细分类，
-本地规则无法非常可靠地判断，因此当前统一把通过基础质量筛选的图片
-标记为 candidate_outfit。
+For finer classification such as "full-body/half-body Outfit, text screenshot, landscape, product marketing", 
+local rules cannot judge very reliably, so currently all images that pass the basic quality screening are uniformly
+marked as candidate_outfit.
 
-后续可以在本脚本中新增 VLM 判断逻辑，例如：
+VLM judgment logic can be added in this script later, for example:
     classify_image_with_vlm(image_path)
 
-让 Qwen-VL-Max 输出：
+To let Qwen-VL-Max output:
     full_body_outfit / half_body_outfit / text_screenshot / landscape / product_marketing
 
-这样就能进一步满足更精细的质量门控要求。
+This will further meet the requirements for more refined quality gatekeeping.
 """
 
 import csv
+import colorsys
 import json
 from collections import Counter
 from pathlib import Path
-from typing import List, Dict, Any ,Optional, Tuple
+from typing import List, Dict, Any, Optional, Tuple
 from PIL import Image, UnidentifiedImageError
 
 from config import (
     DUPLICATE_HASH_DISTANCE,
+    ENABLE_YOLO_LANDSCAPE_FILTER,
     HASH_SIZE,
     IMAGE_TYPE_BAD_RATIO,
     IMAGE_TYPE_CORRUPTED,
     IMAGE_TYPE_DUPLICATE,
+    IMAGE_TYPE_LANDSCAPE,
     IMAGE_TYPE_MISSING,
     IMAGE_TYPE_TOO_SMALL,
     IMAGE_TYPE_VALID,
+    LANDSCAPE_ANALYSIS_SIZE,
+    LANDSCAPE_BLUE_RATIO_THRESHOLD,
+    LANDSCAPE_FOREGROUND_COMPONENT_THRESHOLD,
+    LANDSCAPE_GREEN_RATIO_THRESHOLD,
+    LANDSCAPE_MIXED_BLUE_RATIO_THRESHOLD,
+    LANDSCAPE_MIXED_GREEN_RATIO_THRESHOLD,
+    LANDSCAPE_NATURE_RATIO_THRESHOLD,
+    LANDSCAPE_NO_PERSON_NATURE_RATIO_THRESHOLD,
+    LANDSCAPE_PERSON_KEEP_RATIO_THRESHOLD,
+    LANDSCAPE_SMALL_PERSON_NATURE_RATIO_THRESHOLD,
+    LANDSCAPE_SMALL_PERSON_RATIO_THRESHOLD,
+    LANDSCAPE_TOTAL_PERSON_KEEP_RATIO_THRESHOLD,
+    LANDSCAPE_GROUP_PERSON_COUNT_KEEP_THRESHOLD,
     MAX_ASPECT_RATIO,
     MIN_ASPECT_RATIO,
     MIN_IMAGE_HEIGHT,
     MIN_IMAGE_WIDTH,
     QUALITY_FILTER_LOG_JSON,
     QUALITY_FILTERED_CSV,
+    YOLO_MODEL_PATH,
+    YOLO_PERSON_CONFIDENCE_THRESHOLD,
     ensure_output_dirs,
 )
 
 from data_loader import load_image_records
 
 
+YOLO_PERSON_CLASS_ID = 0
+_YOLO_MODEL = None
+
+
 def compute_average_hash(image: Image.Image, hash_size: int=HASH_SIZE) -> str:
     """
-    计算图片的平均哈希 average hash。
+    Calculate the average hash of the image.
 
-    average hash 是一种简单的感知哈希方法：
-    1. 将图片缩小成 hash_size x hash_size
-    2. 转成灰度图
-    3. 计算所有像素的平均值
-    4. 每个像素大于等于平均值记为 1，否则记为 0
-    5. 最终得到一个 0/1 字符串
+    Average hash is a simple perceptual hashing method:
+    1. Resize the image to hash_size x hash_size
+    2. Convert to grayscale image
+    3. Calculate the average value of all pixels
+    4. Mark each pixel greater than or equal to the average as 1, otherwise 0
+    5. Finally, obtain a 0/1 string
 
-    两张图如果视觉内容非常接近，它们的 hash 通常也会很接近。
-    因此可以用来做“疑似重复图片”过滤。
+    If two images are visually very similar, their hashes are usually very close.
+    Therefore, it can be used for "suspected duplicate image" filtering.
 
-    参数:
+    Args:
         image:
-            PIL Image 对象。
+            PIL Image object.
         hash_size:
-            哈希尺寸，默认来自 config.py。
+            Hash size, default is from config.py.
 
-    返回:
+    Returns:
         str:
-            由 0 和 1 组成的哈希字符串，例如长度为 64。
+            A hash string consisting of 0s and 1s, e.g., length 64.
     """
-    gray_image = image.convert("L").resize((hash_size, hash_size)) # 转成灰度图并缩放
-    pixels = list(gray_image.getdata()) # 获取像素值列表
-    avg_pixel = sum(pixels) / len(pixels) # 计算平均像素值
+    gray_image = image.convert("L").resize((hash_size, hash_size)) # Convert to grayscale and resize
+    pixels = list(gray_image.getdata()) # Get pixel value list
+    avg_pixel = sum(pixels) / len(pixels) # Calculate average pixel value
 
-    bits = ["1" if pixel >= avg_pixel else "0" for pixel in pixels] # 根据平均值生成 0/1 字符串
+    bits = ["1" if pixel >= avg_pixel else "0" for pixel in pixels] # Generate 0/1 string based on average
     return "".join(bits)
 
 def hamming_distance(hash_a: str, hash_b: str) -> int:
     """
-    计算两个哈希字符串之间的汉明距离。
+    Calculate the Hamming distance between two hash strings.
 
-    汉明距离表示两个字符串相同位置上不同字符的数量。
-    对于图片 hash 来说，距离越小，说明图片越相似。
+    Hamming distance represents the number of different characters at the same position of two strings.
+    For image hashes, a smaller distance means the images are more similar.
 
-    参数:
+    Args:
         hash_a:
-            第一个 hash 字符串。
+            The first hash string.
         hash_b:
-            第二个 hash 字符串。
+            The second hash string.
 
-    返回:
+    Returns:
         int:
-            汉明距离。
+            Hamming distance.
     """
     if len(hash_a) != len(hash_b):
-        raise ValueError("两个 hash 的长度不一致，无法计算汉明距离。")
+        raise ValueError("Inconsistent hash lengths, cannot calculate Hamming distance.")
 
     return sum(char_a != char_b for char_a, char_b in zip(hash_a, hash_b))
 
@@ -122,22 +144,22 @@ def find_duplicate_hash(
     threshold: int = DUPLICATE_HASH_DISTANCE,
 ) -> Optional[str]:
     """
-    判断当前图片是否与已有图片疑似重复。
+    Check whether the current image is a suspected duplicate of existing images.
 
-    参数:
+    Args:
         current_hash:
-            当前图片的 average hash。
+            Average hash of the current image.
         existing_hashes:
-            已通过筛选的图片 hash 字典。
-            key 是 Image_ID，value 是图片 hash。
+            A dictionary of image hashes that have passed screening.
+            key is Image_ID, value is image hash.
         threshold:
-            汉明距离阈值。
-            小于等于该值时，认为当前图与已有图重复。
+            Hamming distance threshold.
+            When less than or equal to this value, the current image is considered a duplicate.
 
-    返回:
+    Returns:
         Optional[str]:
-            如果发现重复，返回与其重复的已有 Image_ID。
-            如果没有重复，返回 None。
+            If a duplicate is found, return the duplicated existing Image_ID.
+            If no duplicate, return None.
     """
     for existing_image_id, existing_hash in existing_hashes.items():
         distance = hamming_distance(current_hash, existing_hash)
@@ -147,38 +169,330 @@ def find_duplicate_hash(
 
     return None
 
+
+def analyze_nature_color_distribution(
+    image: Image.Image,
+    analysis_size: int = LANDSCAPE_ANALYSIS_SIZE,
+) -> Tuple[float, float, float, float]:
+    """
+    Estimate the proportion of natural green and sky/water blue in the image.
+
+    This function refers to the HSV color parsing idea in draft.py, but uses PIL + colorsys
+    to avoid adding extra dependencies like OpenCV / YOLO to Node A.
+
+    Returns:
+        Tuple[float, float, float, float]:
+            nature_ratio, green_ratio, blue_ratio, foreground_component_ratio
+    """
+    rgb_image = image.convert("RGB").resize((analysis_size, analysis_size))
+    pixels = list(rgb_image.getdata())
+
+    green_pixels = 0
+    blue_pixels = 0
+    saturated_non_nature_mask: List[bool] = []
+
+    for red, green, blue in pixels:
+        hue, saturation, value = colorsys.rgb_to_hsv(
+            red / 255,
+            green / 255,
+            blue / 255,
+        )
+
+        # Align with common OpenCV HSV ranges: H 0-179, S/V 0-255.
+        hue = hue * 179
+        saturation = saturation * 255
+        value = value * 255
+
+        is_green = 35 <= hue <= 85 and saturation >= 40 and value >= 40
+        is_blue = 90 <= hue <= 130 and saturation >= 40 and value >= 40
+
+        if is_green:
+            green_pixels += 1
+        elif is_blue:
+            blue_pixels += 1
+
+        # Red/black/high saturation clothing or gear can easily form foreground subjects.
+        # If such areas form large blocks, even if natural colors are high, it's more like outdoor outfit/activity photos.
+        saturated_non_nature_mask.append(
+            saturation >= 50 and value >= 35 and not is_green and not is_blue
+        )
+
+    total_pixels = len(pixels)
+    green_ratio = green_pixels / total_pixels
+    blue_ratio = blue_pixels / total_pixels
+    nature_ratio = green_ratio + blue_ratio
+    foreground_component_ratio = find_largest_component_ratio(
+        saturated_non_nature_mask,
+        width=analysis_size,
+        height=analysis_size,
+    )
+
+    return nature_ratio, green_ratio, blue_ratio, foreground_component_ratio
+
+
+def find_largest_component_ratio(mask: List[bool], width: int, height: int) -> float:
+    """
+    Calculate the ratio of the largest four-connected component in the binary mask to the whole image.
+    """
+    seen = [False] * len(mask)
+    largest_component = 0
+
+    for start_index, is_active in enumerate(mask):
+        if not is_active or seen[start_index]:
+            continue
+
+        stack = [start_index]
+        seen[start_index] = True
+        component_size = 0
+
+        while stack:
+            current = stack.pop()
+            component_size += 1
+            x = current % width
+            y = current // width
+
+            for neighbor_x, neighbor_y in (
+                (x + 1, y),
+                (x - 1, y),
+                (x, y + 1),
+                (x, y - 1),
+            ):
+                if not (0 <= neighbor_x < width and 0 <= neighbor_y < height):
+                    continue
+
+                neighbor_index = neighbor_y * width + neighbor_x
+                if mask[neighbor_index] and not seen[neighbor_index]:
+                    seen[neighbor_index] = True
+                    stack.append(neighbor_index)
+
+        largest_component = max(largest_component, component_size)
+
+    return largest_component / len(mask)
+
+
+def get_yolo_model():
+    """
+    Lazy load YOLOv8n model.
+
+    Import ultralytics only when YOLO landscape filter is enabled, to avoid Node A 
+    failing on startup in environments without optional dependencies.
+    """
+    global _YOLO_MODEL
+
+    if _YOLO_MODEL is not None:
+        return _YOLO_MODEL
+
+    if not YOLO_MODEL_PATH.exists():
+        raise FileNotFoundError(
+            f"Cannot find YOLO weights file: {YOLO_MODEL_PATH}. "
+            "Please download yolov8n.pt first, or disable ENABLE_YOLO_LANDSCAPE_FILTER in config.py."
+        )
+
+    try:
+        from ultralytics import YOLO
+    except ImportError as e:
+        raise ImportError(
+            "ultralytics is not installed, cannot enable YOLO landscape filtering. "
+            "Please install ultralytics in the current Python environment, or disable ENABLE_YOLO_LANDSCAPE_FILTER."
+        ) from e
+
+    _YOLO_MODEL = YOLO(str(YOLO_MODEL_PATH))
+    return _YOLO_MODEL
+
+
+def analyze_person_subject_area(image_path: Path, image_area: int) -> Dict[str, float]:
+    """
+    Use YOLOv8n to detect person and calculate the person subject area ratio.
+
+    Returns:
+        Dict[str, float]:
+            person_count, total_person_ratio, max_person_ratio, max_person_confidence
+    """
+    if not ENABLE_YOLO_LANDSCAPE_FILTER:
+        return {
+            "person_count": -1,
+            "total_person_ratio": -1.0,
+            "max_person_ratio": -1.0,
+            "max_person_confidence": -1.0,
+        }
+
+    model = get_yolo_model()
+    prediction = model.predict(
+        source=str(image_path),
+        conf=YOLO_PERSON_CONFIDENCE_THRESHOLD,
+        classes=[YOLO_PERSON_CLASS_ID],
+        verbose=False,
+    )[0]
+
+    person_count = 0
+    total_person_area = 0.0
+    max_person_area = 0.0
+    max_person_confidence = 0.0
+
+    for box in prediction.boxes:
+        confidence = float(box.conf[0])
+        x1, y1, x2, y2 = box.xyxy[0].cpu().numpy()
+        box_area = max(0.0, float(x2 - x1)) * max(0.0, float(y2 - y1))
+
+        person_count += 1
+        total_person_area += box_area
+        max_person_area = max(max_person_area, box_area)
+        max_person_confidence = max(max_person_confidence, confidence)
+
+    return {
+        "person_count": person_count,
+        "total_person_ratio": min(total_person_area / image_area, 1.0),
+        "max_person_ratio": min(max_person_area / image_area, 1.0),
+        "max_person_confidence": max_person_confidence,
+    }
+
+
+def is_high_confidence_landscape(
+    image: Image.Image,
+    image_path: Path,
+) -> Tuple[bool, str, float]:
+    """
+    Determine if the image is a high-confidence pure landscape/empty scene candidate.
+
+    Filter two types of high-confidence landscape/empty scenes here:
+    - Large areas of blue sky/water/snow mountain
+    - Large areas of green grass/forest
+    - Person subject is missing or very small, cannot be an outfit analysis target
+
+    We do not use the single rule of "filter if no person detected" from draft.py, because the current dataset
+    includes product flat-lays, local close-ups, text-image pages, and outfit illustrations, which need to be judged alongside natural colors.
+    """
+    (
+        nature_ratio,
+        green_ratio,
+        blue_ratio,
+        foreground_component_ratio,
+    ) = analyze_nature_color_distribution(image)
+
+    metric_text = (
+        f"nature={nature_ratio:.3f}, green={green_ratio:.3f}, "
+        f"blue={blue_ratio:.3f}, foreground={foreground_component_ratio:.3f}"
+    )
+
+    person_metrics = analyze_person_subject_area(
+        image_path=image_path,
+        image_area=image.width * image.height,
+    )
+
+    person_count = int(person_metrics["person_count"])
+    total_person_ratio = person_metrics["total_person_ratio"]
+    max_person_ratio = person_metrics["max_person_ratio"]
+    person_text = (
+        f"persons={person_count}, total_person={person_metrics['total_person_ratio']:.3f}, "
+        f"max_person={max_person_ratio:.3f}, max_conf={person_metrics['max_person_confidence']:.3f}"
+    )
+    full_metric_text = f"{metric_text}, {person_text}"
+
+    if max_person_ratio >= LANDSCAPE_PERSON_KEEP_RATIO_THRESHOLD:
+        return (
+            False,
+            f"not_landscape_person_subject_large_enough: {full_metric_text}",
+            nature_ratio,
+        )
+
+    if (
+        person_count >= LANDSCAPE_GROUP_PERSON_COUNT_KEEP_THRESHOLD
+        or total_person_ratio >= LANDSCAPE_TOTAL_PERSON_KEEP_RATIO_THRESHOLD
+    ):
+        return (
+            False,
+            f"not_landscape_people_present_as_scene_subject: {full_metric_text}",
+            nature_ratio,
+        )
+
+    if foreground_component_ratio >= LANDSCAPE_FOREGROUND_COMPONENT_THRESHOLD:
+        return (
+            False,
+            f"not_landscape_has_large_foreground_subject: {full_metric_text}",
+            nature_ratio,
+        )
+
+    if (
+        person_count == 0
+        and nature_ratio >= LANDSCAPE_NO_PERSON_NATURE_RATIO_THRESHOLD
+    ):
+        return (
+            True,
+            f"landscape_no_person_nature_dominant: {full_metric_text}",
+            nature_ratio,
+        )
+
+    if (
+        person_count > 0
+        and max_person_ratio < LANDSCAPE_SMALL_PERSON_RATIO_THRESHOLD
+        and nature_ratio >= LANDSCAPE_SMALL_PERSON_NATURE_RATIO_THRESHOLD
+    ):
+        return (
+            True,
+            f"landscape_person_too_small_nature_dominant: {full_metric_text}",
+            nature_ratio,
+        )
+
+    if nature_ratio < LANDSCAPE_NATURE_RATIO_THRESHOLD:
+        return (
+            False,
+            f"not_landscape_by_color_and_subject: {full_metric_text}",
+            nature_ratio,
+        )
+
+    has_dominant_blue = blue_ratio >= LANDSCAPE_BLUE_RATIO_THRESHOLD
+    has_dominant_green = green_ratio >= LANDSCAPE_GREEN_RATIO_THRESHOLD
+    has_mixed_nature = (
+        green_ratio >= LANDSCAPE_MIXED_GREEN_RATIO_THRESHOLD
+        and blue_ratio >= LANDSCAPE_MIXED_BLUE_RATIO_THRESHOLD
+    )
+
+    if has_dominant_blue or has_dominant_green or has_mixed_nature:
+        return (
+            True,
+            f"high_confidence_landscape_by_nature_color: {full_metric_text}",
+            nature_ratio,
+        )
+
+    return (
+        False,
+        f"not_landscape_by_color_mix: {full_metric_text}",
+        nature_ratio,
+    )
+
+
 def inspect_basic_image_quality(
     image_path: Path,
 ) -> Tuple[bool, str, Optional[str], Optional[int], Optional[int], Optional[float], Optional[str]]:
     """
-    检查图片基础质量。
+    Inspect basic image quality.
 
-    本函数只做“确定性强”的基础检查：
-    - 文件是否存在
-    - 图片是否能被 PIL 打开
-    - 图片宽高是否足够
-    - 图片宽高比是否在合理范围
+    This function only performs "highly certain" basic checks:
+    - Whether the file exists
+    - Whether the image can be opened by PIL
+    - Whether the image width/height is sufficient
+    - Whether the image aspect ratio is within a reasonable range
 
-    参数:
+    Args:
         image_path:
-            图片绝对路径。
+            Absolute path of the image.
 
-    返回:
+    Returns:
         Tuple:
             passed:
-                是否通过基础质量检查。
+                Whether it passed the basic quality check.
             image_type:
-                图片类型标签。
+                Image type label.
             reject_reason:
-                如果未通过，记录拒绝原因；如果通过，则为 None。
+                Reason for rejection if failed; None if passed.
             width:
-                图片宽度。
+                Image width.
             height:
-                图片高度。
+                Image height.
             aspect_ratio:
-                图片宽高比。
+                Image aspect ratio.
             image_hash:
-                图片 average hash；如果图片无法打开，则为 None。
+                Image average hash; None if the image cannot be opened.
     """
     if not image_path.exists():
         return (
@@ -193,8 +507,8 @@ def inspect_basic_image_quality(
 
     try:
         with Image.open(image_path) as img:
-            # load() 会强制读取图片数据。
-            # 某些损坏图片可能在 open 阶段不报错，但 load 阶段会报错。
+            # load() will forcibly read the image data.
+            # Some corrupted images might not throw an error during the open stage, but will throw an error during the load stage.
             img.load()
 
             width, height = img.size
@@ -234,6 +548,22 @@ def inspect_basic_image_quality(
                     None,
                 )
 
+            is_landscape, landscape_reason, _ = is_high_confidence_landscape(
+                image=img,
+                image_path=image_path,
+            )
+
+            if is_landscape:
+                return (
+                    False,
+                    IMAGE_TYPE_LANDSCAPE,
+                    landscape_reason,
+                    width,
+                    height,
+                    aspect_ratio,
+                    None,
+                )
+
             image_hash = compute_average_hash(img)
 
             return (
@@ -259,30 +589,31 @@ def inspect_basic_image_quality(
     
 def classify_candidate_image_without_vlm(record: Dict[str, Any]) -> Dict[str, Any]:
     """
-    本地规则版图片分类函数。
+    Local rule-based image classification function.
 
-    当前阶段没有调用视觉大模型，因此只要图片通过基础质量筛选，
-    就将其标记为 candidate_outfit。
+    No Visual Large Model is invoked in this stage, so any image that passes basic quality screening
+    and high-confidence landscape filtering is marked as candidate_outfit.
 
-    为什么不在这里强行判断“风景图/文本截图/营销图”？
-    因为单靠尺寸、比例、hash 等规则很容易误判。
-    比如：
-    - 竖图可能是穿搭照，也可能是长截图
-    - 细节图可能是有效服装细节，也可能是商品营销图
-    - 背景风景中有人物穿搭，仍可能有分析价值
+    Why not strictly determine "landscape / text screenshot / marketing" here?
+    Because relying solely on rules like dimensions, ratio, hash can easily cause misjudgments.
+    For example:
+    - A vertical image might be an outfit photo, or a long screenshot
+    - A detailed image might be valid clothing details, or a product marketing image
+    - Background scenery might contain character outfits and still be valuable for analysis
 
-    所以当前版本采用保守策略：
-    - 明确坏图先排除
-    - 可疑但可用的图先进入 candidate_outfit
-    - 后续通过 Qwen-VL-Max 或人工复核做更精细分类
+    Therefore, a conservative strategy is adopted in the current version:
+    - Explicitly bad images are excluded first
+    - High-confidence pure landscapes/empty scenes are excluded first
+    - Suspicious but usable images first enter candidate_outfit
+    - Finer classification is done later through Qwen-VL-Max or manual review
 
-    参数:
+    Args:
         record:
-            图片级记录。
+            Image-level record.
 
-    返回:
+    Returns:
         Dict[str, Any]:
-            质量筛选结果。
+            Quality screening results.
     """
     image_path = Path(record["image_path"])
 
@@ -314,18 +645,18 @@ def classify_candidate_image_without_vlm(record: Dict[str, Any]) -> Dict[str, An
 
 def run_quality_gatekeeper() -> List[Dict[str, Any]]:
     """
-    执行 Node A 质量门控主流程。
+    Execute the main process of Node A Quality Gatekeeper.
 
-    流程：
-    1. 从 dataset_loader 读取图片级 records
-    2. 对每张图做基础质量检查
-    3. 对通过基础检查的图做重复检测
-    4. 保存 CSV
-    5. 保存 JSON 日志
+    Process:
+    1. Read image-level records from dataset_loader
+    2. Perform basic quality checks for each image
+    3. Perform duplicate detection on images that pass basic checks
+    4. Save CSV
+    5. Save JSON log
 
-    返回:
+    Returns:
         List[Dict[str, Any]]:
-            每张图片的质量筛选结果。
+            Quality screening results for each image.
     """
     ensure_output_dirs()
 
@@ -333,14 +664,14 @@ def run_quality_gatekeeper() -> List[Dict[str, Any]]:
 
     results: List[Dict[str, Any]] = []
 
-    # 只保存“已通过筛选图片”的 hash。
-    # 如果某张图本身已经被拒绝，就不参与后续重复判断。
+    # Only store hashes of "images that passed the screening".
+    # If an image has already been rejected, it doesn't participate in subsequent duplicate checking.
     accepted_hashes: Dict[str, str] = {}
 
     for record in image_records:
         result = classify_candidate_image_without_vlm(record)
 
-        # 如果图片通过基础质量筛选，再检查是否疑似重复。
+        # If the image passes basic quality screening, check if it's a suspected duplicate.
         if result["passed"] and result["image_hash"]:
             duplicate_of = find_duplicate_hash(
                 current_hash=result["image_hash"],
@@ -369,23 +700,23 @@ def save_quality_filtered_csv(
     output_path: Path = QUALITY_FILTERED_CSV,
 ) -> None:
     """
-    保存 Node A 的质量筛选结果 CSV。
+    Save the quality screening results CSV for Node A.
 
-    课程任务要求输出：
+    Required output for course task:
         quality_filtered_images.csv
 
-    必须包含：
+    Must contain:
         Image_ID
-        是否通过筛选
+        passed (whether it passed screening)
 
-    这里额外保留 image_path、image_type、reject_reason、尺寸等字段，
-    方便后续 Node B 读取，也方便 Week 6 展示阶段性结果。
+    Extra fields like image_path, image_type, reject_reason, dimensions, etc., are kept here
+    for convenience of subsequent reading by Node B, and for phased results presentation in Week 6.
 
-    参数:
+    Args:
         results:
-            质量筛选结果列表。
+            List of quality screening results.
         output_path:
-            CSV 输出路径。
+            CSV output path.
     """
     fieldnames = [
         "Image_ID",
@@ -414,19 +745,19 @@ def save_quality_filter_log(
     output_path: Path = QUALITY_FILTER_LOG_JSON,
 ) -> None:
     """
-    保存 Node A 的统计日志 JSON。
+    Save the statistical log JSON for Node A.
 
-    日志用于回答课程阶段展示中的关键问题：
-    - 原始 Dataset v0 有多少张图？
-    - Node A 保留了多少张？
-    - 过滤了多少张？
-    - 过滤原因分别是什么？
+    The log is used to answer key questions in course phased presentations:
+    - How many images are there in the original Dataset v0?
+    - How many were kept by Node A?
+    - How many were filtered?
+    - What are the reasons for filtering respectively?
 
-    参数:
+    Args:
         results:
-            质量筛选结果列表。
+            List of quality screening results.
         output_path:
-            JSON 日志输出路径。
+            JSON log output path.
     """
     total_images = len(results)
     passed_count = sum(1 for item in results if item["passed"])
@@ -444,9 +775,9 @@ def save_quality_filter_log(
         "node": "Node A - Quality Gatekeeper",
         "version": "local_rule_based_v1",
         "description": (
-            "本版本使用本地规则完成基础质量门控，包括文件存在性、图片可读性、"
-            "尺寸、宽高比和疑似重复检测。完整/半身 Outfit、文本截图、风景图、"
-            "营销图等细粒度分类建议在后续版本中接入 Qwen-VL-Max 或 CLIP。"
+            "This version uses local rules to complete basic quality gatekeeping, including file existence, image readability, "
+            "size, aspect ratio, and suspected duplicate detection. Fine-grained classification like full-body/half-body Outfit, "
+            "text screenshots, landscapes, marketing images, etc., are recommended to access Qwen-VL-Max or CLIP in subsequent versions."
         ),
         "total_images": total_images,
         "passed": passed_count,
@@ -462,11 +793,11 @@ def save_quality_filter_log(
 
 if __name__ == "__main__":
     """
-    允许直接运行 Node A：
+    Allow direct execution of Node A:
 
         python node_a_quality_gatekeeper.py
 
-    运行后会生成：
+    After running, it will generate:
         output/image_index.csv
         output/quality_filtered_images.csv
         output/quality_filter_log.json
@@ -477,9 +808,9 @@ if __name__ == "__main__":
     passed = sum(1 for item in final_results if item["passed"])
     rejected = total - passed
 
-    print("Node A 质量门控完成。")
-    print(f"总图片数: {total}")
-    print(f"通过筛选: {passed}")
-    print(f"过滤数量: {rejected}")
-    print(f"结果 CSV: {QUALITY_FILTERED_CSV}")
-    print(f"日志 JSON: {QUALITY_FILTER_LOG_JSON}")
+    print("Node A quality gatekeeping completed.")
+    print(f"Total images: {total}")
+    print(f"Passed screening: {passed}")
+    print(f"Filtered amount: {rejected}")
+    print(f"Result CSV: {QUALITY_FILTERED_CSV}")
+    print(f"Log JSON: {QUALITY_FILTER_LOG_JSON}")

@@ -1,21 +1,29 @@
 """
-Node B: Vision-LLM Annotator 视觉标注节点。
+Node B: Vision-LLM Annotator.
 
-本节点目标：
-读取 Node A 质量门控后的图片，调用 Qwen-VL-Max 多模态模型，
-为每张通过筛选的 Gorpcore / 机能风穿搭图片生成结构化 JSON 标签。
+Node Objective:
+Read the images after Node A quality gating, call the Qwen-VL-Max multimodal model,
+and generate structured JSON labels for each screened Gorpcore outfit image.
 
-输入：
+Input:
     Gorpcore_Agent/output/quality_filtered_images.csv
 
-输出：
+Output:
     Gorpcore_Agent/output/json_labels/{Image_ID}.json
     Gorpcore_Agent/output/annotation_errors.csv
+    Gorpcore_Agent/output/vision_curation_log.csv
 
-模型输出目标格式：
+Target model output format:
 
 {
   "Image_ID": "GRP-XHS-xxx-01",
+  "Curation_Status": "use",
+  "Image_Category": "full_body_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "none",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "clear",
   "Pockets": 2,
   "Zipper_Type": "Sealed",
   "Fit": "Loose",
@@ -29,10 +37,10 @@ Node B: Vision-LLM Annotator 视觉标注节点。
   "Confidence": 0.82
 }
 
-注意：
-1. API Key 不应写死在代码中。
-2. 请在运行前设置环境变量 DASHSCOPE_API_KEY。
-3. 本脚本使用阿里云百炼 DashScope 的 OpenAI 兼容接口。
+Note:
+1. API Key should not be hardcoded in the code.
+2. Please set the environment variable DASHSCOPE_API_KEY before running.
+3. This script uses the OpenAI compatible interface of Alibaba Cloud Bailian DashScope.
 """
 
 import base64
@@ -40,6 +48,7 @@ import csv
 import json
 import os
 import time
+from collections import Counter
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -54,42 +63,78 @@ from config import (
 
 
 # ============================================================
-# 1. Node B 输出文件配置
+# 1. Node B Output File Configuration
 # ============================================================
 
-# 记录标注失败的图片。
+# Record images that failed to be annotated.
 ANNOTATION_ERRORS_CSV = OUTPUT_DIR / "annotation_errors.csv"
 
-# 可选：记录 Node B 总体运行日志。
+# Record Node B curation judgment for easy manual review of use / reject / review.
+CURATION_LOG_CSV = OUTPUT_DIR / "vision_curation_log.csv"
+
+# Optional: Record Node B overall run log.
 ANNOTATION_LOG_JSON = OUTPUT_DIR / "vision_annotation_log.json"
 
 
 # ============================================================
-# 2. 模型与 API 配置
+# 2. Model and API Configuration
 # ============================================================
 
-# DashScope OpenAI 兼容模式接口地址。
+# DashScope OpenAI compatible mode interface address.
 DASHSCOPE_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 
-# 使用的视觉语言模型。
-# qwen-vl-max 适合做较强的图片理解与结构化标注。
+# The vision-language model used.
+# qwen-vl-max is suitable for stronger image understanding and structured annotation.
 VISION_MODEL_NAME = "qwen-vl-max"
 
-# 每次 API 请求之间的间隔秒数。
-# 设置短暂 sleep 是为了降低触发限流的概率。
+# Interval seconds between each API request.
+# Setting a brief sleep is to reduce the probability of triggering rate limits.
 REQUEST_INTERVAL_SECONDS = 0.8
 
-# 如果某张图片已经有 JSON 标注文件，是否跳过。
-# True 表示支持断点续跑。
+# If a picture already has a JSON annotation file, whether to skip it.
+# True means supporting resuming from a breakpoint.
 SKIP_EXISTING_LABELS = True
 
 
 # ============================================================
-# 3. 枚举值配置
+# 3. Enum Values Configuration
 # ============================================================
 
 VALID_ZIPPER_TYPES = {"Sealed", "Exposed", "None", "Unclear"}
 VALID_FIT_TYPES = {"Loose", "Regular", "Tight", "Oversized", "Cropped", "Unclear"}
+VALID_CURATION_STATUS = {"use", "reject", "review"}
+VALID_IMAGE_CATEGORIES = {
+    "full_body_outfit",
+    "half_body_outfit",
+    "detail_closeup",
+    "multi_panel_outfit",
+    "text_overlay_outfit",
+    "product_marketing",
+    "landscape",
+    "text_screenshot",
+    "unrelated",
+    "unclear",
+}
+VALID_REJECT_REASONS = {
+    "none",
+    "no_visible_outfit",
+    "pure_landscape",
+    "text_dominant",
+    "product_only",
+    "unrelated",
+    "too_unclear",
+}
+VALID_BODY_COVERAGE = {
+    "full_body",
+    "upper_body",
+    "lower_body",
+    "partial_detail",
+    "multiple",
+    "none",
+    "unclear",
+}
+VALID_TEXT_OVERLAY_LEVELS = {"none", "low", "medium", "high"}
+VALID_MAIN_SUBJECT_VISIBILITY = {"clear", "partial", "small", "unclear", "none"}
 VALID_SCENARIOS = {
     "Urban_Commute",
     "Outdoor",
@@ -102,13 +147,19 @@ VALID_VISUAL_WEIGHTS = {"lightweight", "medium", "heavyweight", "unclear"}
 
 
 # ============================================================
-# 4. Prompt 配置
+# 4. Prompt Configuration
 # ============================================================
 
 SYSTEM_PROMPT = """
-You are a professional fashion data analyst and clothing curation expert.
+You are a professional fashion image curator and Gorpcore outfit analyst.
 
-Your task is to analyze one Gorpcore or technical outfit image and extract structured visual labels.
+Your task has two stages:
+
+Stage 1: Curate the image.
+Decide whether this image is useful for outfit analysis.
+
+Stage 2: If useful, extract structured visual labels only from visible clothing.
+If not useful, return curation fields and set unclear/default values for fashion labels.
 
 You must return strictly valid JSON only.
 Do not include Markdown.
@@ -118,6 +169,14 @@ Do not include code fences.
 Required JSON schema:
 
 {
+  "Curation_Status": "use" | "reject" | "review",
+  "Image_Category": "full_body_outfit" | "half_body_outfit" | "detail_closeup" | "multi_panel_outfit" | "text_overlay_outfit" | "product_marketing" | "landscape" | "text_screenshot" | "unrelated" | "unclear",
+  "Reject_Reason": "none" | "no_visible_outfit" | "pure_landscape" | "text_dominant" | "product_only" | "unrelated" | "too_unclear",
+  "Body_Coverage": "full_body" | "upper_body" | "lower_body" | "partial_detail" | "multiple" | "none" | "unclear",
+  "Text_Overlay_Level": "none" | "low" | "medium" | "high",
+  "Outfit_Count": integer,
+  "Main_Subject_Visibility": "clear" | "partial" | "small" | "unclear" | "none",
+
   "Pockets": integer,
   "Zipper_Type": "Sealed" | "Exposed" | "None" | "Unclear",
   "Fit": "Loose" | "Regular" | "Tight" | "Oversized" | "Cropped" | "Unclear",
@@ -131,10 +190,22 @@ Required JSON schema:
   "Confidence": number between 0 and 1
 }
 
+Curating rules:
+- Use full_body_outfit when a complete outfit is visible from head/torso to legs or shoes.
+- Use half_body_outfit when only upper body or lower body is clearly visible.
+- Use detail_closeup for close-up images of garments, pockets, zippers, fabric, shoes, bags, or technical details.
+- Use multi_panel_outfit when the image contains multiple sub-images or collage panels showing outfits.
+- Use text_overlay_outfit when text exists but the outfit is still visually analyzable.
+- Reject pure landscape, text-dominant screenshots, unrelated images, and product-only images without a worn outfit.
+- For product-only images, reject unless the clothing is clearly worn by a person or shown as a complete styled outfit.
+- If the image is multi-panel, analyze the most visually clear and central outfit. Set Outfit_Count to the approximate number of visible outfits.
+- If only a detail is visible, do not infer full outfit fit, scenario, or hidden garment features.
+- If an image is useful but ambiguous, use Curation_Status "review" rather than forcing a confident label.
+
 Field definitions:
 - Pockets: approximate number of visible functional or three-dimensional pockets.
 - Zipper_Type: identify whether visible zipper design is sealed, exposed, absent, or unclear.
-- Fit: judge the overall garment silhouette.
+- Fit: judge only the visible garment silhouette. Use "Unclear" when the body coverage is too partial.
 - Reflective: true only if reflective strips or reflective technical details are clearly visible.
 - Primary_Color: dominant clothing color.
 - Secondary_Color: secondary or accent clothing color. Use "none" if not visible.
@@ -148,35 +219,36 @@ Important rules:
 - If the image is unclear, still return JSON and use "Unclear" or "unclear".
 - Do not hallucinate hidden details.
 - Only label what is visually supported by the image.
+- For rejected images, set Reject_Reason to a specific non-none value, Gorpcore_Relevance to 0, and Confidence to your confidence in the rejection.
 """
 
 
 # ============================================================
-# 5. 基础工具函数
+# 5. Basic Utility Functions
 # ============================================================
 
 def get_dashscope_client() -> OpenAI:
     """
-    初始化 DashScope OpenAI 兼容客户端。
+    Initialize DashScope OpenAI compatible client.
 
-    API Key 从环境变量 DASHSCOPE_API_KEY 读取。
-    不建议把 API Key 写死在源码中，因为：
-    1. 容易泄露
-    2. 不方便多人协作
-    3. 不符合项目伦理与安全实践
+    The API Key is read from the environment variable DASHSCOPE_API_KEY.
+    It is not recommended to hardcode the API Key in the source code because:
+    1. It's easy to leak
+    2. It's not convenient for multi-person collaboration
+    3. It does not comply with project ethics and security practices
 
-    Windows PowerShell 中可以这样设置：
+    You can set it in Windows PowerShell like this:
         $env:DASHSCOPE_API_KEY="你的API_KEY"
 
-    返回:
+    Returns:
         OpenAI:
-            OpenAI 兼容客户端。
+            OpenAI compatible client.
     """
     api_key = os.getenv("DASHSCOPE_API_KEY")
 
     if not api_key:
         raise EnvironmentError(
-            "未检测到环境变量 DASHSCOPE_API_KEY。请先设置 API Key。"
+            "Environment variable DASHSCOPE_API_KEY not detected. Please set the API Key first."
         )
 
     return OpenAI(
@@ -187,20 +259,20 @@ def get_dashscope_client() -> OpenAI:
 
 def encode_image_to_base64(image_path: Path) -> str:
     """
-    将本地图片编码为 Base64 字符串。
+    Encode the local image to a Base64 string.
 
-    Qwen-VL-Max 的 OpenAI 兼容接口支持使用：
+    Qwen-VL-Max's OpenAI compatible interface supports using:
         data:image/jpeg;base64,...
 
-    这种方式直接传入本地图片内容。
+    This method passes in the local image content directly.
 
-    参数:
+    Parameters:
         image_path:
-            图片路径。
+            Image path.
 
-    返回:
+    Returns:
         str:
-            Base64 编码后的图片字符串。
+            Base64 encoded image string.
     """
     with image_path.open("rb") as f:
         return base64.b64encode(f.read()).decode("utf-8")
@@ -208,15 +280,15 @@ def encode_image_to_base64(image_path: Path) -> str:
 
 def guess_mime_type(image_path: Path) -> str:
     """
-    根据图片后缀推断 MIME 类型。
+    Infer the MIME type based on the image suffix.
 
-    参数:
+    Parameters:
         image_path:
-            图片路径。
+            Image path.
 
-    返回:
+    Returns:
         str:
-            MIME 类型字符串。
+            MIME type string.
     """
     suffix = image_path.suffix.lower()
 
@@ -229,25 +301,25 @@ def guess_mime_type(image_path: Path) -> str:
     if suffix == ".webp":
         return "image/webp"
 
-    # 默认按 jpeg 处理，因为当前数据集主要是 jpg。
+    # Default is processed as jpeg, because the current dataset is mostly jpg.
     return "image/jpeg"
 
 
 def load_passed_images(csv_path: Path = QUALITY_FILTERED_CSV) -> List[Dict[str, str]]:
     """
-    读取 Node A 输出，并筛选 passed == true 的图片。
+    Read Node A output, and filter images with passed == true.
 
-    参数:
+    Parameters:
         csv_path:
-            quality_filtered_images.csv 路径。
+            Path to quality_filtered_images.csv.
 
-    返回:
+    Returns:
         List[Dict[str, str]]:
-            通过质量门控的图片记录。
+            Image records that passed quality gating.
     """
     if not csv_path.exists():
         raise FileNotFoundError(
-            f"找不到 Node A 输出文件: {csv_path}。请先运行 node_a_quality_gatekeeper.py"
+            f"Cannot find Node A output file: {csv_path}。Please run node_a_quality_gatekeeper.py first."
         )
 
     passed_records: List[Dict[str, str]] = []
@@ -266,21 +338,21 @@ def load_passed_images(csv_path: Path = QUALITY_FILTERED_CSV) -> List[Dict[str, 
 
 def label_output_path(image_id: str) -> Path:
     """
-    根据 Image_ID 生成单图 JSON 标签输出路径。
+    Generate single image JSON label output path based on Image_ID.
 
-    参数:
+    Parameters:
         image_id:
-            图片唯一 ID。
+            Unique image ID.
 
-    返回:
+    Returns:
         Path:
-            JSON 输出路径。
+            JSON output path.
     """
     return JSON_LABEL_DIR / f"{image_id}.json"
 
 
 # ============================================================
-# 6. 模型调用函数
+# 6. Model Call Function
 # ============================================================
 
 def call_vision_model(
@@ -288,17 +360,17 @@ def call_vision_model(
     image_path: Path,
 ) -> Dict[str, Any]:
     """
-    调用 Qwen-VL-Max 对单张图片进行视觉标注。
+    Call Qwen-VL-Max to perform visual annotation on a single image.
 
-    参数:
+    Parameters:
         client:
-            DashScope OpenAI 兼容客户端。
+            DashScope OpenAI compatible client.
         image_path:
-            图片路径。
+            Image path.
 
-    返回:
+    Returns:
         Dict[str, Any]:
-            模型返回并解析后的 JSON 字典。
+            The JSON dictionary returned by the model and parsed.
     """
     base64_image = encode_image_to_base64(image_path)
     mime_type = guess_mime_type(image_path)
@@ -330,31 +402,31 @@ def call_vision_model(
     try:
         parsed = json.loads(raw_content)
     except json.JSONDecodeError as e:
-        raise ValueError(f"模型返回内容不是合法 JSON: {raw_content}") from e
+        raise ValueError(f"Model return content is not valid JSON: {raw_content}") from e
 
     return parsed
 
 
 # ============================================================
-# 7. 标签规范化与校验
+# 7. Label Normalization and Validation
 # ============================================================
 
 def clamp_float(value: Any, default: float = 0.0) -> float:
     """
-    将输入值转换为 0 到 1 之间的小数。
+    Convert input value to a decimal between 0 and 1.
 
-    模型有时可能返回字符串，例如 "0.8"。
-    这里统一转成 float，并限制范围。
+    The model may sometimes return a string, such as "0.8"。
+    Here it is uniformly converted to float, and the range is limited.
 
-    参数:
+    Parameters:
         value:
-            任意输入值。
+            Any input value.
         default:
-            转换失败时使用的默认值。
+            The default value to use when conversion fails.
 
-    返回:
+    Returns:
         float:
-            0 到 1 之间的小数。
+            A decimal between 0 and 1.
     """
     try:
         number = float(value)
@@ -372,19 +444,19 @@ def clamp_float(value: Any, default: float = 0.0) -> float:
 
 def normalize_bool(value: Any) -> bool:
     """
-    将模型返回的值规范化为 boolean。
+    Normalize the value returned by the model to boolean.
 
-    模型通常会返回 true/false，
-    但偶尔也可能返回 "true"、"yes"、"no"。
-    这里做兼容处理。
+    The model usually returns true/false,
+    but occasionally it may return "true"、"yes"、"no"。
+    Compatibility processing is done here.
 
-    参数:
+    Parameters:
         value:
-            任意输入值。
+            Any input value.
 
-    返回:
+    Returns:
         bool:
-            布尔值。
+            Boolean value.
     """
     if isinstance(value, bool):
         return value
@@ -396,19 +468,19 @@ def normalize_bool(value: Any) -> bool:
 
 def normalize_enum(value: Any, valid_values: set, default: str) -> str:
     """
-    将枚举字段规范化到允许范围内。
+    Normalize the enum field to the allowed range.
 
-    参数:
+    Parameters:
         value:
-            模型返回值。
+            Model return value.
         valid_values:
-            允许的枚举集合。
+            Allowed enum set.
         default:
-            如果模型返回值不合法，使用该默认值。
+            If the model return value is invalid, use this default value.
 
-    返回:
+    Returns:
         str:
-            合法枚举值。
+            Valid enum value.
     """
     text = str(value).strip()
 
@@ -418,21 +490,33 @@ def normalize_enum(value: Any, valid_values: set, default: str) -> str:
     return default
 
 
+def normalize_int(value: Any, default: int = 0, minimum: int = 0) -> int:
+    """
+    Normalize integer fields returned by the model.
+    """
+    try:
+        number = int(value)
+    except (TypeError, ValueError):
+        number = default
+
+    return max(minimum, number)
+
+
 def normalize_material_clue(value: Any) -> List[str]:
     """
-    规范化 Material_Clue 字段。
+    Normalize the Material_Clue field.
 
-    目标格式是字符串数组。
-    如果模型返回字符串，则包装成单元素数组。
-    如果为空，则返回 ["unclear"]。
+    The target format is a string array.
+    If the model returns a string, wrap it into a single-element array.
+    If it is empty, return ["unclear"]。
 
-    参数:
+    Parameters:
         value:
-            模型返回的 Material_Clue。
+            Material_Clue returned by the model.
 
-    返回:
+    Returns:
         List[str]:
-            材料线索数组。
+            Material clue array.
     """
     if isinstance(value, list):
         cleaned = [str(item).strip() for item in value if str(item).strip()]
@@ -444,7 +528,7 @@ def normalize_material_clue(value: Any) -> List[str]:
     if not cleaned:
         return ["unclear"]
 
-    # 最多保留 4 个，避免模型输出过长。
+    # Keep up to 4 to avoid excessively long model output.
     return cleaned[:4]
 
 
@@ -453,39 +537,68 @@ def normalize_annotation(
     raw_label: Dict[str, Any],
 ) -> Dict[str, Any]:
     """
-    将模型原始输出规范化为项目统一 JSON 标签格式。
+    Normalize the raw model output into the project's unified JSON label format.
 
-    这样做的意义：
-    1. 保证每个 JSON 文件字段一致
-    2. 避免模型偶发输出格式波动影响后续 Node C
-    3. 将 Image_ID、note_id、image_path 等追溯字段补进去
+    The significance of doing this:
+    1. Ensure consistent fields in each JSON file
+    2. Avoid occasional model output format fluctuations affecting subsequent Node C
+    3. Supplement traceback fields like Image_ID, note_id, image_path
 
-    参数:
+    Parameters:
         image_record:
-            来自 quality_filtered_images.csv 的图片记录。
+            Image record from quality_filtered_images.csv.
         raw_label:
-            模型返回的原始 JSON。
+            Raw JSON returned by the model.
 
-    返回:
+    Returns:
         Dict[str, Any]:
-            规范化后的标签 JSON。
+            Normalized label JSON.
     """
-    pockets_raw = raw_label.get("Pockets", 0)
+    curation_status = normalize_enum(
+        raw_label.get("Curation_Status"),
+        VALID_CURATION_STATUS,
+        "review",
+    )
 
-    try:
-        pockets = int(pockets_raw)
-    except (TypeError, ValueError):
-        pockets = 0
+    reject_reason = normalize_enum(
+        raw_label.get("Reject_Reason"),
+        VALID_REJECT_REASONS,
+        "none" if curation_status == "use" else "too_unclear",
+    )
 
-    if pockets < 0:
-        pockets = 0
+    if curation_status == "reject" and reject_reason == "none":
+        reject_reason = "too_unclear"
 
     normalized = {
         "Image_ID": image_record.get("Image_ID", ""),
         "note_id": image_record.get("note_id", ""),
         "image_path": image_record.get("image_path", ""),
 
-        "Pockets": pockets,
+        "Curation_Status": curation_status,
+        "Image_Category": normalize_enum(
+            raw_label.get("Image_Category"),
+            VALID_IMAGE_CATEGORIES,
+            "unclear",
+        ),
+        "Reject_Reason": reject_reason,
+        "Body_Coverage": normalize_enum(
+            raw_label.get("Body_Coverage"),
+            VALID_BODY_COVERAGE,
+            "unclear",
+        ),
+        "Text_Overlay_Level": normalize_enum(
+            raw_label.get("Text_Overlay_Level"),
+            VALID_TEXT_OVERLAY_LEVELS,
+            "none",
+        ),
+        "Outfit_Count": normalize_int(raw_label.get("Outfit_Count"), default=0),
+        "Main_Subject_Visibility": normalize_enum(
+            raw_label.get("Main_Subject_Visibility"),
+            VALID_MAIN_SUBJECT_VISIBILITY,
+            "unclear",
+        ),
+
+        "Pockets": normalize_int(raw_label.get("Pockets"), default=0),
         "Zipper_Type": normalize_enum(
             raw_label.get("Zipper_Type"),
             VALID_ZIPPER_TYPES,
@@ -523,8 +636,8 @@ def normalize_annotation(
             default=0.0,
         ),
 
-        # 保存模型原始输出，方便排查和人工复核。
-        # 如果后续觉得文件太大，可以删除这一项。
+        # Save raw model output to facilitate troubleshooting and manual review.
+        # If you later feel the file is too large, you can delete this item.
         "raw_model_output": raw_label,
     }
 
@@ -533,11 +646,11 @@ def normalize_annotation(
 
 def save_json_label(label: Dict[str, Any]) -> None:
     """
-    保存单张图片的 JSON 标签。
+    Save the JSON label of a single image.
 
-    参数:
+    Parameters:
         label:
-            规范化后的标签数据。
+            Normalized label data.
     """
     image_id = label["Image_ID"]
     output_path = label_output_path(image_id)
@@ -547,19 +660,19 @@ def save_json_label(label: Dict[str, Any]) -> None:
 
 
 # ============================================================
-# 8. 错误日志与运行日志
+# 8. Error Log and Run Log
 # ============================================================
 
 def save_annotation_errors(errors: List[Dict[str, str]]) -> None:
     """
-    保存标注失败记录到 CSV。
+    Save annotation failure records to CSV.
 
-    即使没有错误，也会生成一个带表头的空 CSV，
-    方便证明脚本完整运行过。
+    Even if there are no errors, an empty CSV with headers will be generated,
+    to prove that the script has run completely.
 
-    参数:
+    Parameters:
         errors:
-            错误记录列表。
+            List of error records.
     """
     fieldnames = [
         "Image_ID",
@@ -576,25 +689,106 @@ def save_annotation_errors(errors: List[Dict[str, str]]) -> None:
             writer.writerow({key: error.get(key, "") for key in fieldnames})
 
 
+def build_curation_record(
+    image_record: Dict[str, str],
+    label: Optional[Dict[str, Any]] = None,
+    run_status: str = "annotated",
+) -> Dict[str, Any]:
+    """
+    Extract curation log fields from normalized labels.
+    """
+    label = label or {}
+
+    return {
+        "Image_ID": image_record.get("Image_ID", label.get("Image_ID", "")),
+        "note_id": image_record.get("note_id", label.get("note_id", "")),
+        "image_path": image_record.get("image_path", label.get("image_path", "")),
+        "run_status": run_status,
+        "Curation_Status": label.get("Curation_Status", ""),
+        "Image_Category": label.get("Image_Category", ""),
+        "Reject_Reason": label.get("Reject_Reason", ""),
+        "Body_Coverage": label.get("Body_Coverage", ""),
+        "Text_Overlay_Level": label.get("Text_Overlay_Level", ""),
+        "Outfit_Count": label.get("Outfit_Count", ""),
+        "Main_Subject_Visibility": label.get("Main_Subject_Visibility", ""),
+        "Gorpcore_Relevance": label.get("Gorpcore_Relevance", ""),
+        "Confidence": label.get("Confidence", ""),
+    }
+
+
+def load_existing_label(output_path: Path) -> Optional[Dict[str, Any]]:
+    """
+    Read existing JSON labels to supplement curation logs when resuming from a breakpoint.
+    """
+    try:
+        with output_path.open("r", encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
+def save_curation_log(curation_records: List[Dict[str, Any]]) -> None:
+    """
+    Save Node B curation results to CSV for easy manual review.
+    """
+    fieldnames = [
+        "Image_ID",
+        "note_id",
+        "image_path",
+        "run_status",
+        "Curation_Status",
+        "Image_Category",
+        "Reject_Reason",
+        "Body_Coverage",
+        "Text_Overlay_Level",
+        "Outfit_Count",
+        "Main_Subject_Visibility",
+        "Gorpcore_Relevance",
+        "Confidence",
+    ]
+
+    with CURATION_LOG_CSV.open("w", encoding="utf-8-sig", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+
+        for record in curation_records:
+            writer.writerow({key: record.get(key, "") for key in fieldnames})
+
+
 def save_annotation_log(
     total_candidates: int,
     annotated_count: int,
     skipped_count: int,
     error_count: int,
+    curation_records: List[Dict[str, Any]],
 ) -> None:
     """
-    保存 Node B 运行统计日志。
+    Save Node B run statistics log.
 
-    参数:
+    Parameters:
         total_candidates:
-            Node A 通过筛选的候选图片总数。
+            Total number of candidate images passed Node A screening.
         annotated_count:
-            本次成功新增标注数量。
+            Number of successful new annotations this time.
         skipped_count:
-            因已有 JSON 文件而跳过的数量。
+            Number skipped due to existing JSON files.
         error_count:
-            标注失败数量。
+            Number of failed annotations.
     """
+    curation_status_counter = Counter(
+        str(item.get("Curation_Status", "")).strip() or "unknown"
+        for item in curation_records
+    )
+    image_category_counter = Counter(
+        str(item.get("Image_Category", "")).strip() or "unknown"
+        for item in curation_records
+    )
+    reject_reason_counter = Counter(
+        str(item.get("Reject_Reason", "")).strip() or "unknown"
+        for item in curation_records
+        if str(item.get("Curation_Status", "")).strip() == "reject"
+    )
+
     log_data = {
         "node": "Node B - Vision-LLM Annotator",
         "model": VISION_MODEL_NAME,
@@ -602,8 +796,12 @@ def save_annotation_log(
         "annotated_count": annotated_count,
         "skipped_existing": skipped_count,
         "error_count": error_count,
+        "curation_status_breakdown": dict(curation_status_counter),
+        "image_category_breakdown": dict(image_category_counter),
+        "reject_reason_breakdown": dict(reject_reason_counter),
         "json_label_dir": str(JSON_LABEL_DIR),
         "annotation_errors_csv": str(ANNOTATION_ERRORS_CSV),
+        "curation_log_csv": str(CURATION_LOG_CSV),
     }
 
     with ANNOTATION_LOG_JSON.open("w", encoding="utf-8") as f:
@@ -611,18 +809,18 @@ def save_annotation_log(
 
 
 # ============================================================
-# 9. Node B 主流程
+# 9. Node B Main Process
 # ============================================================
 
 def run_vision_annotator(limit: Optional[int] = None) -> None:
     """
-    执行 Node B 批量视觉标注。
+    Execute Node B batch visual annotation.
 
-    参数:
+    Parameters:
         limit:
-            可选参数，用于限制本次处理图片数量。
-            例如调试时传入 limit=5，只标注前 5 张。
-            正式运行时传入 None，表示处理全部通过 Node A 的图片。
+            Optional parameter to limit the number of images processed this time.
+            For example, pass limit=5 when debugging to annotate only the first 5 images.
+            Pass None during official run to indicate processing all images that passed Node A.
     """
     ensure_output_dirs()
 
@@ -634,6 +832,7 @@ def run_vision_annotator(limit: Optional[int] = None) -> None:
     client = get_dashscope_client()
 
     errors: List[Dict[str, str]] = []
+    curation_records: List[Dict[str, Any]] = []
 
     annotated_count = 0
     skipped_count = 0
@@ -644,34 +843,61 @@ def run_vision_annotator(limit: Optional[int] = None) -> None:
 
         output_path = label_output_path(image_id)
 
-        print(f"[{index}/{len(passed_images)}] 正在标注: {image_id}")
+        print(f"[{index}/{len(passed_images)}] Annotating: {image_id}")
 
         if SKIP_EXISTING_LABELS and output_path.exists():
-            print(f"  已存在 JSON 标签，跳过: {output_path}")
+            print(f"  JSON label already exists, skipping: {output_path}")
+            existing_label = load_existing_label(output_path)
+            curation_records.append(
+                build_curation_record(
+                    image_record=image_record,
+                    label=existing_label,
+                    run_status="skipped_existing",
+                )
+            )
             skipped_count += 1
             continue
 
         if not image_path.exists():
+            curation_records.append(
+                build_curation_record(
+                    image_record=image_record,
+                    run_status="missing_file",
+                )
+            )
             errors.append(
                 {
                     "Image_ID": image_id,
                     "image_path": str(image_path),
                     "error_type": "missing_file",
-                    "error_message": "图片文件不存在",
+                    "error_message": "Image file does not exist",
                 }
             )
-            print("  失败：图片文件不存在")
+            print("  Failed: Image file does not exist")
             continue
 
         try:
             raw_label = call_vision_model(client, image_path)
             normalized_label = normalize_annotation(image_record, raw_label)
             save_json_label(normalized_label)
+            curation_records.append(
+                build_curation_record(
+                    image_record=image_record,
+                    label=normalized_label,
+                    run_status="annotated",
+                )
+            )
 
             annotated_count += 1
-            print(f"  成功保存: {output_path}")
+            print(f"  Successfully saved: {output_path}")
 
         except Exception as e:
+            curation_records.append(
+                build_curation_record(
+                    image_record=image_record,
+                    run_status="error",
+                )
+            )
             errors.append(
                 {
                     "Image_ID": image_id,
@@ -680,36 +906,39 @@ def run_vision_annotator(limit: Optional[int] = None) -> None:
                     "error_message": str(e),
                 }
             )
-            print(f"  标注失败: {type(e).__name__}: {e}")
+            print(f"  Annotation failed: {type(e).__name__}: {e}")
 
         time.sleep(REQUEST_INTERVAL_SECONDS)
 
     save_annotation_errors(errors)
+    save_curation_log(curation_records)
 
     save_annotation_log(
         total_candidates=len(passed_images),
         annotated_count=annotated_count,
         skipped_count=skipped_count,
         error_count=len(errors),
+        curation_records=curation_records,
     )
 
-    print("Node B 视觉标注完成。")
-    print(f"候选图片数: {len(passed_images)}")
-    print(f"新增成功标注: {annotated_count}")
-    print(f"跳过已有标注: {skipped_count}")
-    print(f"失败数量: {len(errors)}")
-    print(f"JSON 输出目录: {JSON_LABEL_DIR}")
-    print(f"错误日志: {ANNOTATION_ERRORS_CSV}")
+    print("Node B visual annotation completed.")
+    print(f"Candidate images: {len(passed_images)}")
+    print(f"Successfully newly annotated: {annotated_count}")
+    print(f"Skipped existing annotations: {skipped_count}")
+    print(f"Failure count: {len(errors)}")
+    print(f"JSON output directory: {JSON_LABEL_DIR}")
+    print(f"Error log: {ANNOTATION_ERRORS_CSV}")
+    print(f"Curation log: {CURATION_LOG_CSV}")
 
 
 if __name__ == "__main__":
     """
-    直接运行方式：
+    Direct run method:
 
         python node_b_vision_annotator.py
 
-    调试建议：
-    可以先把下面的 None 改成 3 或 5，只跑几张图片，确认 API 正常后再全量运行。
+    Debugging suggestion:
+    You can change None below to 3 or 5 to run only a few images, and run in full after confirming the API is normal.
 
         run_vision_annotator(limit=5)
     """

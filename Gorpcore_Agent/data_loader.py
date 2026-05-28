@@ -1,13 +1,13 @@
 """
 Dataset v0 加载与图片级索引构建工具。
 
-当前 xiaohongshu_data.json 是“笔记级”数据：
+当前 xiaohongshu_with_images.json 是“笔记级”数据：
 一条记录对应一篇小红书笔记，一篇笔记可能包含多张图片。
 
 但是后续 Node A / Node B / Node C 的处理单位应该是“单张图片”，
 所以本文件的核心任务是：
 
-1. 读取 Dataset/xiaohongshu_data.json
+1. 读取 Dataset/xhs/xiaohongshu_with_images.json
 2. 遍历每条笔记中的 downloaded_image_paths
 3. 将笔记级数据展开成图片级 records
 4. 为每张图片生成唯一 Image_ID
@@ -23,7 +23,7 @@ Dataset v0 加载与图片级索引构建工具。
     "raw_text": "...",
     "publish_time_resolved": "2025-07-07",
     "relative_image_path": "xiaohongshu_images\\机能风穿搭\\...\\image_01.jpg",
-    "image_path": "E:\\code\\Project\\Dataset\\xiaohongshu_images\\xiaohongshu_images\\机能风穿搭\\...\\image_01.jpg"
+    "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\机能风穿搭\\...\\image_01.webp"
 }
 
 注意：
@@ -92,10 +92,11 @@ def resolve_image_path(relative_path: str) -> Path:
     """
     根据 JSON 中的相对路径，解析出图片的真实绝对路径。
 
-    当前项目存在一个容易混淆的目录层级：
+    当前项目的数据集目录层级：
 
     Dataset/
-      xiaohongshu_images/
+      xhs/
+        xiaohongshu_with_images.json
         xiaohongshu_images/
           Gorpcore/
           机能风穿搭/
@@ -107,7 +108,7 @@ def resolve_image_path(relative_path: str) -> Path:
         IMAGE_BASE_DIR / relative_path
 
     也就是：
-        Dataset/xiaohongshu_images/xiaohongshu_images/机能风穿搭/...
+        Dataset/xhs/xiaohongshu_images/机能风穿搭/...
 
     参数:
         relative_path:
@@ -148,13 +149,24 @@ def build_image_id(note_id: str, image_index: int) -> str:
     """
     return f"GRP-XHS-{note_id}-{image_index:02d}"
 
+
+def safe_text(value: Any) -> str:
+    """
+    将 JSON 中可能为 None 的文本字段规范化为空字符串。
+    """
+    if value is None:
+        return ""
+
+    return str(value).strip()
+
+
 def build_image_records(raw_data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
     将笔记级数据展开成图片级数据。
 
     参数:
         raw_data:
-            从 xiaohongshu_data.json 读取出的笔记级数据列表。
+            从 xiaohongshu_with_images.json 读取出的笔记级数据列表。
 
     返回:
         List[Dict[str, Any]]:
@@ -163,7 +175,7 @@ def build_image_records(raw_data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     image_record: List[Dict[str, Any]] = [] # :代表类型提示，说明 image_record 是一个列表，列表中的元素是字典，字典的键是字符串，值可以是任意类型。
 
     for note in raw_data:
-        note_id = str(note.get("note_id", "")).strip() # 笔记 ID，转换为字符串并去除空白
+        note_id = safe_text(note.get("note_id", "")) # 笔记 ID，转换为字符串并去除空白
         # 如果 note_id 缺失，说明这条数据无法稳定追溯。
         # 这里仍然保留，但用 unknown_note 兜底，避免程序中断。
         if not note_id:
@@ -189,14 +201,15 @@ def build_image_records(raw_data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
                 {
                     "Image_ID": image_id,
                     "note_id": note_id,
-                    "keyword": note.get("keyword", "").strip(),
-                    "title_text": note.get("title_text", "").strip(),
-                    "raw_text": note.get("raw_text", "").strip(),
-                    "text_source": note.get("text_source", "").strip(),
-                    "publish_timestamp": note.get("publish_timestamp", ""),
-                    "publish_time_text": note.get("publish_time_text", ""),
-                    "publish_time_resolved": note.get("publish_time_resolved", ""),
-                    "relative_image_path": str(relative_path).strip(),
+                    "keyword": safe_text(note.get("keyword", "")),
+                    "note_url": safe_text(note.get("note_url", "")),
+                    "title_text": safe_text(note.get("title_text", "")),
+                    "raw_text": safe_text(note.get("raw_text", "")),
+                    "text_source": safe_text(note.get("text_source", "")),
+                    "publish_timestamp": safe_text(note.get("publish_timestamp", "")),
+                    "publish_time_text": safe_text(note.get("publish_time_text", "")),
+                    "publish_time_resolved": safe_text(note.get("publish_time_resolved", "")),
+                    "relative_image_path": safe_text(relative_path),
                     "image_path": str(absolute_image_path),
                 }
             )

@@ -12,8 +12,8 @@
 
 E:/code/Project/
   Dataset/
-    xiaohongshu_data.json
-    xiaohongshu_images/
+    xhs/
+      xiaohongshu_with_images.json
       xiaohongshu_images/
         Gorpcore/
         机能风穿搭/
@@ -44,13 +44,13 @@ AGENT_ROOT = PROJECT_ROOT / "Gorpcore_Agent"
 DATASET_ROOT = PROJECT_ROOT / "Dataset"
 
 # 小红书原始 JSON 数据文件。
-RAW_DATA_JSON = DATASET_ROOT / "xiaohongshu_data.json"
+RAW_DATA_JSON = DATASET_ROOT / "xhs" / "xiaohongshu_with_images.json"
 
-# 小红书图片根目录。
-# 注意：xiaohongshu_data.json 中的 downloaded_image_paths 通常是：
+# 小红书数据工作目录。
+# 注意：xiaohongshu_with_images.json 中的 downloaded_image_paths 通常是：
 # xiaohongshu_images\机能风穿搭\xxx\image_01.jpg
-# 实际完整路径需要拼到 Dataset/xiaohongshu_images/ 后面。
-IMAGE_BASE_DIR = DATASET_ROOT / "xiaohongshu_images"
+# 实际完整路径需要拼到 Dataset/xhs/ 后面。
+IMAGE_BASE_DIR = DATASET_ROOT / "xhs"
 
 # 输出目录。
 OUTPUT_DIR = AGENT_ROOT / "output"
@@ -119,11 +119,38 @@ IMAGE_TYPE_CORRUPTED = "corrupted_image"
 IMAGE_TYPE_TOO_SMALL = "too_small"
 IMAGE_TYPE_BAD_RATIO = "bad_aspect_ratio"
 IMAGE_TYPE_DUPLICATE = "duplicate"
+IMAGE_TYPE_LANDSCAPE = "landscape"
 IMAGE_TYPE_UNCLEAR = "unclear"
 
 
 # ============================================================
-# 5. 工具函数
+# 5. Node A 风景图本地规则阈值
+# ============================================================
+
+# 当前不调用多模态模型，也不依赖需要下载权重的人体检测模型。
+# 这里只过滤“高置信度纯风景/空景候选”，避免误伤户外穿搭照。
+LANDSCAPE_ANALYSIS_SIZE = 96
+LANDSCAPE_NATURE_RATIO_THRESHOLD = 0.82
+LANDSCAPE_BLUE_RATIO_THRESHOLD = 0.62
+LANDSCAPE_GREEN_RATIO_THRESHOLD = 0.62
+LANDSCAPE_MIXED_GREEN_RATIO_THRESHOLD = 0.50
+LANDSCAPE_MIXED_BLUE_RATIO_THRESHOLD = 0.25
+LANDSCAPE_FOREGROUND_COMPONENT_THRESHOLD = 0.08
+
+# YOLOv8n 只用于轻量检测 person 类，避免把远景/空景送到 Node B。
+ENABLE_YOLO_LANDSCAPE_FILTER = True
+YOLO_MODEL_PATH = PROJECT_ROOT / "yolov8n.pt"
+YOLO_PERSON_CONFIDENCE_THRESHOLD = 0.25
+LANDSCAPE_PERSON_KEEP_RATIO_THRESHOLD = 0.12
+LANDSCAPE_TOTAL_PERSON_KEEP_RATIO_THRESHOLD = 0.12
+LANDSCAPE_GROUP_PERSON_COUNT_KEEP_THRESHOLD = 3
+LANDSCAPE_SMALL_PERSON_RATIO_THRESHOLD = 0.055
+LANDSCAPE_NO_PERSON_NATURE_RATIO_THRESHOLD = 0.35
+LANDSCAPE_SMALL_PERSON_NATURE_RATIO_THRESHOLD = 0.35
+
+
+# ============================================================
+# 6. 工具函数
 # ============================================================
 
 def ensure_output_dirs() -> None:
