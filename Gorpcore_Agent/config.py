@@ -59,6 +59,18 @@ OUTPUT_DIR = AGENT_ROOT / "output"
 # 但提前放在 config 里，后面可以复用。
 JSON_LABEL_DIR = OUTPUT_DIR / "json_labels"
 
+# Node C output: semantic cross-check results.
+CROSS_CHECKED_RECORDS_CSV = OUTPUT_DIR / "cross_checked_records.csv"
+SEMANTIC_REVIEW_POOL_CSV = OUTPUT_DIR / "review_pool.csv"
+SEMANTIC_CROSS_CHECK_LOG_JSON = OUTPUT_DIR / "semantic_cross_check_log.json"
+
+# Text analysis outputs. The canonical path is under Gorpcore_Agent/output,
+# while the legacy member folder is kept for compatibility with existing runs.
+TEXT_ANALYSIS_OUTPUT_DIR = OUTPUT_DIR / "text_analysis"
+LEGACY_TEXT_ANALYSIS_OUTPUT_DIR = (
+    AGENT_ROOT / "member_d_text_analysis" / "output" / "text_analysis"
+)
+
 
 # ============================================================
 # 2. Node A 输出文件配置
@@ -162,3 +174,4 @@ def ensure_output_dirs() -> None:
     """
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     JSON_LABEL_DIR.mkdir(parents=True, exist_ok=True)
+    TEXT_ANALYSIS_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,22 @@
+{
+  "node": "Node C - Semantic Cross-check",
+  "description": "Cross-check Node B visual labels against XHS source text and text-analysis outputs. Rows with low confidence or semantic conflict are exported to the manual review pool.",
+  "total_visual_labels": 3,
+  "review_pool_count": 3,
+  "text_analysis_source": "E:\\code\\Project\\Gorpcore_Agent\\member_d_text_analysis\\output\\text_analysis",
+  "curation_status_breakdown": {
+    "use": 2,
+    "review": 1
+  },
+  "image_category_breakdown": {
+    "unclear": 3
+  },
+  "conflict_type_breakdown": {
+    "missing_text_context": 3
+  },
+  "useful_design_signal_breakdown": {
+    "none": 3
+  },
+  "cross_checked_records_csv": "E:\\code\\Project\\Gorpcore_Agent\\output\\cross_checked_records.csv",
+  "review_pool_csv": "E:\\code\\Project\\Gorpcore_Agent\\output\\review_pool.csv"
+}
