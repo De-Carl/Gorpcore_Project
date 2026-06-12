@@ -1,0 +1,53 @@
+{
+  "Image_ID": "GRP-XHS-68ccce0f0000000013007a4b-03",
+  "note_id": "68ccce0f0000000013007a4b",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\机能风穿搭\\68ccce0f0000000013007a4b\\image_03.webp",
+  "Curation_Status": "use",
+  "Image_Category": "full_body_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "low",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 0,
+  "Zipper_Type": "Unclear",
+  "Fit": "Loose",
+  "Reflective": false,
+  "Primary_Color": "gray",
+  "Secondary_Color": "beige",
+  "Material_Clue": [
+    "plaid fabric",
+    "layered textile",
+    "cotton blend",
+    "wool-like"
+  ],
+  "Scenario": "Fashion_Street",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.2,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "full_body_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "low",
+    "Outfit_Count": 1,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 0,
+    "Zipper_Type": "Unclear",
+    "Fit": "Loose",
+    "Reflective": false,
+    "Primary_Color": "gray",
+    "Secondary_Color": "beige",
+    "Material_Clue": [
+      "plaid fabric",
+      "layered textile",
+      "cotton blend",
+      "wool-like"
+    ],
+    "Scenario": "Fashion_Street",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.2,
+    "Confidence": 0.9
+  }
+}

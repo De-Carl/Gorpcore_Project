@@ -1,0 +1,24 @@
+{
+  "node": "Node D - Human Review Consolidator",
+  "description": "Consolidates manual review decisions from review_pool.csv with Node C cross-checked records and exports final curated records.",
+  "input_cross_checked_records": 930,
+  "input_review_pool_records": 331,
+  "manual_filled_review_records": 331,
+  "reviewed_records": 930,
+  "final_curated_records": 709,
+  "pending_review_records": 0,
+  "decision_breakdown": {
+    "reject": 221,
+    "accept": 709
+  },
+  "status_breakdown": {
+    "manual_reject": 221,
+    "auto_accepted_no_review_needed": 599,
+    "manual_revised": 105,
+    "manual_accepted_with_corrections": 5
+  },
+  "review_template_csv": "E:\\code\\Project\\Gorpcore_Agent\\output\\human_review_template.csv",
+  "human_reviewed_records_csv": "E:\\code\\Project\\Gorpcore_Agent\\output\\human_reviewed_records.csv",
+  "human_review_pending_csv": "E:\\code\\Project\\Gorpcore_Agent\\output\\human_review_pending.csv",
+  "final_curated_records_csv": "E:\\code\\Project\\Gorpcore_Agent\\output\\final_curated_records.csv"
+}

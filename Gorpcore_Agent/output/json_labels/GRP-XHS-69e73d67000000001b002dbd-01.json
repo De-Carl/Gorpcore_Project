@@ -1,0 +1,53 @@
+{
+  "Image_ID": "GRP-XHS-69e73d67000000001b002dbd-01",
+  "note_id": "69e73d67000000001b002dbd",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\Gorpcore\\69e73d67000000001b002dbd\\image_01.webp",
+  "Curation_Status": "use",
+  "Image_Category": "multi_panel_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "multiple",
+  "Text_Overlay_Level": "medium",
+  "Outfit_Count": 8,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 4,
+  "Zipper_Type": "Exposed",
+  "Fit": "Oversized",
+  "Reflective": true,
+  "Primary_Color": "orange",
+  "Secondary_Color": "black",
+  "Material_Clue": [
+    "ripstop",
+    "nylon",
+    "technical shell",
+    "fleece"
+  ],
+  "Scenario": "Outdoor",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.95,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "multi_panel_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "multiple",
+    "Text_Overlay_Level": "medium",
+    "Outfit_Count": 8,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 4,
+    "Zipper_Type": "Exposed",
+    "Fit": "Oversized",
+    "Reflective": true,
+    "Primary_Color": "orange",
+    "Secondary_Color": "black",
+    "Material_Clue": [
+      "ripstop",
+      "nylon",
+      "technical shell",
+      "fleece"
+    ],
+    "Scenario": "Outdoor",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.95,
+    "Confidence": 0.9
+  }
+}

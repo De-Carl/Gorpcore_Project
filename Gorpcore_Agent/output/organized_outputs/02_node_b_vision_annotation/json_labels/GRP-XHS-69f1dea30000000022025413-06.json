@@ -1,0 +1,51 @@
+{
+  "Image_ID": "GRP-XHS-69f1dea30000000022025413-06",
+  "note_id": "69f1dea30000000022025413",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\Gorpcore\\69f1dea30000000022025413\\image_06.webp",
+  "Curation_Status": "use",
+  "Image_Category": "full_body_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "none",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 2,
+  "Zipper_Type": "Exposed",
+  "Fit": "Loose",
+  "Reflective": false,
+  "Primary_Color": "yellow",
+  "Secondary_Color": "gray",
+  "Material_Clue": [
+    "nylon",
+    "shell fabric",
+    "technical"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.8,
+  "Confidence": 0.95,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "full_body_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "none",
+    "Outfit_Count": 1,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 2,
+    "Zipper_Type": "Exposed",
+    "Fit": "Loose",
+    "Reflective": false,
+    "Primary_Color": "yellow",
+    "Secondary_Color": "gray",
+    "Material_Clue": [
+      "nylon",
+      "shell fabric",
+      "technical"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.8,
+    "Confidence": 0.95
+  }
+}

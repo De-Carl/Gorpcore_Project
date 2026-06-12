@@ -1,0 +1,53 @@
+{
+  "Image_ID": "GRP-XHS-693a84ad000000001e00c2bf-04",
+  "note_id": "693a84ad000000001e00c2bf",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\机能风穿搭\\693a84ad000000001e00c2bf\\image_04.webp",
+  "Curation_Status": "use",
+  "Image_Category": "full_body_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "none",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 2,
+  "Zipper_Type": "Exposed",
+  "Fit": "Loose",
+  "Reflective": false,
+  "Primary_Color": "camouflage",
+  "Secondary_Color": "black",
+  "Material_Clue": [
+    "denim",
+    "nylon",
+    "leather",
+    "mesh"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.7,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "full_body_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "none",
+    "Outfit_Count": 1,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 2,
+    "Zipper_Type": "Exposed",
+    "Fit": "Loose",
+    "Reflective": false,
+    "Primary_Color": "camouflage",
+    "Secondary_Color": "black",
+    "Material_Clue": [
+      "denim",
+      "nylon",
+      "leather",
+      "mesh"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.7,
+    "Confidence": 0.9
+  }
+}

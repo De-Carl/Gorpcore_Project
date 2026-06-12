@@ -1,0 +1,51 @@
+{
+  "Image_ID": "GRP-XHS-69fd66fd000000003601d750-06",
+  "note_id": "69fd66fd000000003601d750",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\Gorpcore\\69fd66fd000000003601d750\\image_06.webp",
+  "Curation_Status": "use",
+  "Image_Category": "half_body_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "upper_body",
+  "Text_Overlay_Level": "low",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 0,
+  "Zipper_Type": "None",
+  "Fit": "Regular",
+  "Reflective": false,
+  "Primary_Color": "lavender",
+  "Secondary_Color": "pink",
+  "Material_Clue": [
+    "cotton",
+    "crewneck",
+    "long sleeve"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "lightweight",
+  "Gorpcore_Relevance": 0.3,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "half_body_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "upper_body",
+    "Text_Overlay_Level": "low",
+    "Outfit_Count": 1,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 0,
+    "Zipper_Type": "None",
+    "Fit": "Regular",
+    "Reflective": false,
+    "Primary_Color": "lavender",
+    "Secondary_Color": "pink",
+    "Material_Clue": [
+      "cotton",
+      "crewneck",
+      "long sleeve"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "lightweight",
+    "Gorpcore_Relevance": 0.3,
+    "Confidence": 0.9
+  }
+}

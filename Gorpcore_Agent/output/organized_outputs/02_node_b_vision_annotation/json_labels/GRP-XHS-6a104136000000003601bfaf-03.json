@@ -1,0 +1,51 @@
+{
+  "Image_ID": "GRP-XHS-6a104136000000003601bfaf-03",
+  "note_id": "6a104136000000003601bfaf",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\机能风穿搭\\6a104136000000003601bfaf\\image_03.webp",
+  "Curation_Status": "use",
+  "Image_Category": "full_body_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "none",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 2,
+  "Zipper_Type": "Exposed",
+  "Fit": "Regular",
+  "Reflective": false,
+  "Primary_Color": "black",
+  "Secondary_Color": "gray",
+  "Material_Clue": [
+    "matte nylon",
+    "fleece lining",
+    "technical fabric"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.6,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "full_body_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "none",
+    "Outfit_Count": 1,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 2,
+    "Zipper_Type": "Exposed",
+    "Fit": "Regular",
+    "Reflective": false,
+    "Primary_Color": "black",
+    "Secondary_Color": "gray",
+    "Material_Clue": [
+      "matte nylon",
+      "fleece lining",
+      "technical fabric"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.6,
+    "Confidence": 0.9
+  }
+}

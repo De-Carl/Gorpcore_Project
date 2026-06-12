@@ -1,0 +1,53 @@
+{
+  "Image_ID": "GRP-XHS-68694b7e0000000012023f13-04",
+  "note_id": "68694b7e0000000012023f13",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\Gorpcore\\68694b7e0000000012023f13\\image_04.webp",
+  "Curation_Status": "use",
+  "Image_Category": "multi_panel_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "medium",
+  "Outfit_Count": 5,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 4,
+  "Zipper_Type": "Exposed",
+  "Fit": "Loose",
+  "Reflective": false,
+  "Primary_Color": "olive green",
+  "Secondary_Color": "white",
+  "Material_Clue": [
+    "ripstop",
+    "technical fabric",
+    "nylon",
+    "cotton"
+  ],
+  "Scenario": "Outdoor",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.95,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "multi_panel_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "medium",
+    "Outfit_Count": 5,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 4,
+    "Zipper_Type": "Exposed",
+    "Fit": "Loose",
+    "Reflective": false,
+    "Primary_Color": "olive green",
+    "Secondary_Color": "white",
+    "Material_Clue": [
+      "ripstop",
+      "technical fabric",
+      "nylon",
+      "cotton"
+    ],
+    "Scenario": "Outdoor",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.95,
+    "Confidence": 0.9
+  }
+}

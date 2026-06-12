@@ -1,0 +1,39 @@
+{
+  "Image_ID": "GRP-XHS-6820362200000000220241ba-01",
+  "note_id": "6820362200000000220241ba",
+  "image_path": "E:\\code\\Project\\Dataset\\xiaohongshu_images\\xiaohongshu_images\\机能风穿搭\\6820362200000000220241ba\\image_01.jpg",
+  "Pockets": 4,
+  "Zipper_Type": "Exposed",
+  "Fit": "Regular",
+  "Reflective": false,
+  "Primary_Color": "black",
+  "Secondary_Color": "gray",
+  "Material_Clue": [
+    "matte nylon",
+    "ripstop",
+    "technical",
+    "waterproof"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.9,
+  "Confidence": 0.95,
+  "raw_model_output": {
+    "Pockets": 4,
+    "Zipper_Type": "Exposed",
+    "Fit": "Regular",
+    "Reflective": false,
+    "Primary_Color": "black",
+    "Secondary_Color": "gray",
+    "Material_Clue": [
+      "matte nylon",
+      "ripstop",
+      "technical",
+      "waterproof"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.9,
+    "Confidence": 0.95
+  }
+}

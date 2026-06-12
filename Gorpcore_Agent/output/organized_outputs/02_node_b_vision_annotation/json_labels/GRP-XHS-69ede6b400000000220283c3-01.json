@@ -1,0 +1,51 @@
+{
+  "Image_ID": "GRP-XHS-69ede6b400000000220283c3-01",
+  "note_id": "69ede6b400000000220283c3",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\Gorpcore\\69ede6b400000000220283c3\\image_01.webp",
+  "Curation_Status": "use",
+  "Image_Category": "half_body_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "upper_body",
+  "Text_Overlay_Level": "high",
+  "Outfit_Count": 2,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 0,
+  "Zipper_Type": "None",
+  "Fit": "Regular",
+  "Reflective": false,
+  "Primary_Color": "white",
+  "Secondary_Color": "green",
+  "Material_Clue": [
+    "nylon",
+    "technical fabric",
+    "sportswear"
+  ],
+  "Scenario": "Sports",
+  "Visual_Weight": "lightweight",
+  "Gorpcore_Relevance": 0.3,
+  "Confidence": 0.8,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "half_body_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "upper_body",
+    "Text_Overlay_Level": "high",
+    "Outfit_Count": 2,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 0,
+    "Zipper_Type": "None",
+    "Fit": "Regular",
+    "Reflective": false,
+    "Primary_Color": "white",
+    "Secondary_Color": "green",
+    "Material_Clue": [
+      "nylon",
+      "technical fabric",
+      "sportswear"
+    ],
+    "Scenario": "Sports",
+    "Visual_Weight": "lightweight",
+    "Gorpcore_Relevance": 0.3,
+    "Confidence": 0.8
+  }
+}

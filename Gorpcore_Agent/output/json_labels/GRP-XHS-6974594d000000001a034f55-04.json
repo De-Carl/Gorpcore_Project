@@ -1,0 +1,53 @@
+{
+  "Image_ID": "GRP-XHS-6974594d000000001a034f55-04",
+  "note_id": "6974594d000000001a034f55",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\机能风穿搭\\6974594d000000001a034f55\\image_04.webp",
+  "Curation_Status": "use",
+  "Image_Category": "multi_panel_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "low",
+  "Outfit_Count": 3,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 2,
+  "Zipper_Type": "Exposed",
+  "Fit": "Oversized",
+  "Reflective": false,
+  "Primary_Color": "black",
+  "Secondary_Color": "pink",
+  "Material_Clue": [
+    "matte nylon",
+    "fleece",
+    "technical fabric",
+    "ripstop"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.85,
+  "Confidence": 0.95,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "multi_panel_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "low",
+    "Outfit_Count": 3,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 2,
+    "Zipper_Type": "Exposed",
+    "Fit": "Oversized",
+    "Reflective": false,
+    "Primary_Color": "black",
+    "Secondary_Color": "pink",
+    "Material_Clue": [
+      "matte nylon",
+      "fleece",
+      "technical fabric",
+      "ripstop"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.85,
+    "Confidence": 0.95
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "Image_ID": "GRP-XHS-69abcb250000000015030d20-04",
+  "note_id": "69abcb250000000015030d20",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\机能风穿搭\\69abcb250000000015030d20\\image_04.webp",
+  "Curation_Status": "reject",
+  "Image_Category": "text_overlay_outfit",
+  "Reject_Reason": "text_dominant",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "high",
+  "Outfit_Count": 2,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 0,
+  "Zipper_Type": "Unclear",
+  "Fit": "Regular",
+  "Reflective": false,
+  "Primary_Color": "brown",
+  "Secondary_Color": "beige",
+  "Material_Clue": [
+    "cotton",
+    "linen"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "lightweight",
+  "Gorpcore_Relevance": 0.1,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Curation_Status": "reject",
+    "Image_Category": "text_overlay_outfit",
+    "Reject_Reason": "text_dominant",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "high",
+    "Outfit_Count": 2,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 0,
+    "Zipper_Type": "Unclear",
+    "Fit": "Regular",
+    "Reflective": false,
+    "Primary_Color": "brown",
+    "Secondary_Color": "beige",
+    "Material_Clue": [
+      "cotton",
+      "linen"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "lightweight",
+    "Gorpcore_Relevance": 0.1,
+    "Confidence": 0.9
+  }
+}

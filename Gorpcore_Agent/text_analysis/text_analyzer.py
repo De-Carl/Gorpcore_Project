@@ -1,7 +1,7 @@
 """
-Node D: Text Analyzer 文本分析节点。
+Text Analyzer 文本分析辅助模块。
 
-本节点目标：
+本模块目标：
 1. 读取多平台文本数据（优先 master CSV，否则读取各平台 JSON）
 2. 统一字段并清理文本
 3. jieba 分词与词频统计
@@ -10,7 +10,7 @@ Node D: Text Analyzer 文本分析节点。
 6. 输出清理文本、痛点表、情感标签、微本体、设计映射与分析报告
 
 运行方式：
-    python node_d_text_analyzer.py
+    python text_analyzer.py
 """
 
 from __future__ import annotations
@@ -741,7 +741,7 @@ def write_text_analysis_report(
 ) -> None:
     """生成 text_analysis_report.md。"""
     lines: List[str] = [
-        "# Node D 文本分析报告",
+        "# 文本分析辅助模块报告",
         "",
         "## 数据概览",
         "",
@@ -896,7 +896,7 @@ def run_text_analysis() -> Dict[str, Any]:
 
 def main() -> None:
     """命令行入口。"""
-    print("Node D: 文本分析开始...")
+    print("文本分析辅助模块开始...")
     summary = run_text_analysis()
     print(f"数据源: {summary['source']}")
     print(f"输入记录数: {summary['input_records']}")
@@ -907,7 +907,7 @@ def main() -> None:
     print("生成文件:")
     for filename in OUTPUT_FILE_NAMES:
         print(f"  - {filename}")
-    print("Node D: 文本分析完成。")
+    print("文本分析辅助模块完成。")
 
 
 if __name__ == "__main__":

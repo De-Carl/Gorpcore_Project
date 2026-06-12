@@ -1,0 +1,53 @@
+{
+  "Image_ID": "GRP-XHS-68877d1e0000000025011010-09",
+  "note_id": "68877d1e0000000025011010",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\Gorpcore\\68877d1e0000000025011010\\image_09.webp",
+  "Curation_Status": "use",
+  "Image_Category": "multi_panel_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "multiple",
+  "Text_Overlay_Level": "medium",
+  "Outfit_Count": 6,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 4,
+  "Zipper_Type": "Exposed",
+  "Fit": "Regular",
+  "Reflective": false,
+  "Primary_Color": "black",
+  "Secondary_Color": "white",
+  "Material_Clue": [
+    "ripstop",
+    "shell fabric",
+    "matte nylon",
+    "technical"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.85,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "multi_panel_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "multiple",
+    "Text_Overlay_Level": "medium",
+    "Outfit_Count": 6,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 4,
+    "Zipper_Type": "Exposed",
+    "Fit": "Regular",
+    "Reflective": false,
+    "Primary_Color": "black",
+    "Secondary_Color": "white",
+    "Material_Clue": [
+      "ripstop",
+      "shell fabric",
+      "matte nylon",
+      "technical"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.85,
+    "Confidence": 0.9
+  }
+}

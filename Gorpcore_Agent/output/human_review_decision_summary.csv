@@ -1,0 +1,13 @@
+﻿Metric,Value,Count
+Manual_Decision,reject,221
+Manual_Decision,revise,105
+Manual_Decision,accept,5
+Manual_Category,full_body_outfit,98
+Manual_Category,product_marketing,51
+Manual_Category,unrelated,40
+Manual_Category,multi_panel_outfit,34
+Manual_Category,text_overlay_outfit,26
+Manual_Category,half_body_outfit,26
+Manual_Category,text_screenshot,23
+Manual_Category,detail_closeup,18
+Manual_Category,landscape,15

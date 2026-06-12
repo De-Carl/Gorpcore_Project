@@ -1,0 +1,53 @@
+{
+  "Image_ID": "GRP-XHS-68c50c83000000001c035c93-01",
+  "note_id": "68c50c83000000001c035c93",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\机能风穿搭\\68c50c83000000001c035c93\\image_01.webp",
+  "Curation_Status": "use",
+  "Image_Category": "multi_panel_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "medium",
+  "Outfit_Count": 6,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 4,
+  "Zipper_Type": "Exposed",
+  "Fit": "Oversized",
+  "Reflective": false,
+  "Primary_Color": "black",
+  "Secondary_Color": "white",
+  "Material_Clue": [
+    "matte nylon",
+    "ripstop",
+    "shell fabric",
+    "fleece"
+  ],
+  "Scenario": "Fashion_Street",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.3,
+  "Confidence": 0.85,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "multi_panel_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "medium",
+    "Outfit_Count": 6,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 4,
+    "Zipper_Type": "Exposed",
+    "Fit": "Oversized",
+    "Reflective": false,
+    "Primary_Color": "black",
+    "Secondary_Color": "white",
+    "Material_Clue": [
+      "matte nylon",
+      "ripstop",
+      "shell fabric",
+      "fleece"
+    ],
+    "Scenario": "Fashion_Street",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.3,
+    "Confidence": 0.85
+  }
+}

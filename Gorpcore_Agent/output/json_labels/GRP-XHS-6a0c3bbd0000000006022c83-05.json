@@ -1,0 +1,51 @@
+{
+  "Image_ID": "GRP-XHS-6a0c3bbd0000000006022c83-05",
+  "note_id": "6a0c3bbd0000000006022c83",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\Gorpcore\\6a0c3bbd0000000006022c83\\image_05.webp",
+  "Curation_Status": "use",
+  "Image_Category": "full_body_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "none",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 3,
+  "Zipper_Type": "None",
+  "Fit": "Loose",
+  "Reflective": false,
+  "Primary_Color": "black",
+  "Secondary_Color": "olive green",
+  "Material_Clue": [
+    "cotton",
+    "ripstop",
+    "canvas"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.75,
+  "Confidence": 0.95,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "full_body_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "none",
+    "Outfit_Count": 1,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 3,
+    "Zipper_Type": "None",
+    "Fit": "Loose",
+    "Reflective": false,
+    "Primary_Color": "black",
+    "Secondary_Color": "olive green",
+    "Material_Clue": [
+      "cotton",
+      "ripstop",
+      "canvas"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.75,
+    "Confidence": 0.95
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "Image_ID": "GRP-XHS-68b063df000000001d01d584-04",
+  "note_id": "68b063df000000001d01d584",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\机能风穿搭\\68b063df000000001d01d584\\image_04.webp",
+  "Curation_Status": "use",
+  "Image_Category": "multi_panel_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "low",
+  "Outfit_Count": 5,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 4,
+  "Zipper_Type": "Exposed",
+  "Fit": "Loose",
+  "Reflective": false,
+  "Primary_Color": "gray",
+  "Secondary_Color": "black",
+  "Material_Clue": [
+    "ripstop",
+    "shell fabric",
+    "technical",
+    "waterproof"
+  ],
+  "Scenario": "Outdoor",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.95,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "multi_panel_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "low",
+    "Outfit_Count": 5,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 4,
+    "Zipper_Type": "Exposed",
+    "Fit": "Loose",
+    "Reflective": false,
+    "Primary_Color": "gray",
+    "Secondary_Color": "black",
+    "Material_Clue": [
+      "ripstop",
+      "shell fabric",
+      "technical",
+      "waterproof"
+    ],
+    "Scenario": "Outdoor",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.95,
+    "Confidence": 0.9
+  }
+}

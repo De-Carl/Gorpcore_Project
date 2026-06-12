@@ -64,11 +64,21 @@ CROSS_CHECKED_RECORDS_CSV = OUTPUT_DIR / "cross_checked_records.csv"
 SEMANTIC_REVIEW_POOL_CSV = OUTPUT_DIR / "review_pool.csv"
 SEMANTIC_CROSS_CHECK_LOG_JSON = OUTPUT_DIR / "semantic_cross_check_log.json"
 
+# Node D output: human review consolidation.
+HUMAN_REVIEW_TEMPLATE_CSV = OUTPUT_DIR / "human_review_template.csv"
+HUMAN_REVIEWED_RECORDS_CSV = OUTPUT_DIR / "human_reviewed_records.csv"
+HUMAN_REVIEW_PENDING_CSV = OUTPUT_DIR / "human_review_pending.csv"
+FINAL_CURATED_RECORDS_CSV = OUTPUT_DIR / "final_curated_records.csv"
+HUMAN_REVIEW_LOG_JSON = OUTPUT_DIR / "human_review_log.json"
+
 # Text analysis outputs. The canonical path is under Gorpcore_Agent/output,
 # while the legacy member folder is kept for compatibility with existing runs.
 TEXT_ANALYSIS_OUTPUT_DIR = OUTPUT_DIR / "text_analysis"
 LEGACY_TEXT_ANALYSIS_OUTPUT_DIR = (
     AGENT_ROOT / "member_d_text_analysis" / "output" / "text_analysis"
+)
+LOCAL_TEXT_ANALYSIS_OUTPUT_DIR = (
+    AGENT_ROOT / "text_analysis" / "output" / "text_analysis"
 )
 
 

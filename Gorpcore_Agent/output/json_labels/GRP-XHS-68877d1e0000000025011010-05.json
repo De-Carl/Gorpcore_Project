@@ -1,0 +1,53 @@
+{
+  "Image_ID": "GRP-XHS-68877d1e0000000025011010-05",
+  "note_id": "68877d1e0000000025011010",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\Gorpcore\\68877d1e0000000025011010\\image_05.webp",
+  "Curation_Status": "use",
+  "Image_Category": "multi_panel_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "medium",
+  "Outfit_Count": 3,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 4,
+  "Zipper_Type": "Exposed",
+  "Fit": "Loose",
+  "Reflective": false,
+  "Primary_Color": "brown",
+  "Secondary_Color": "green",
+  "Material_Clue": [
+    "ripstop",
+    "technical fabric",
+    "shell material",
+    "wool blend"
+  ],
+  "Scenario": "Outdoor",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.85,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "multi_panel_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "medium",
+    "Outfit_Count": 3,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 4,
+    "Zipper_Type": "Exposed",
+    "Fit": "Loose",
+    "Reflective": false,
+    "Primary_Color": "brown",
+    "Secondary_Color": "green",
+    "Material_Clue": [
+      "ripstop",
+      "technical fabric",
+      "shell material",
+      "wool blend"
+    ],
+    "Scenario": "Outdoor",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.85,
+    "Confidence": 0.9
+  }
+}

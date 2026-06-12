@@ -1,0 +1,51 @@
+{
+  "Image_ID": "GRP-XHS-69d3a506000000001d01bf7c-06",
+  "note_id": "69d3a506000000001d01bf7c",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\Gorpcore\\69d3a506000000001d01bf7c\\image_06.webp",
+  "Curation_Status": "use",
+  "Image_Category": "half_body_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "lower_body",
+  "Text_Overlay_Level": "none",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 2,
+  "Zipper_Type": "Unclear",
+  "Fit": "Loose",
+  "Reflective": false,
+  "Primary_Color": "blue",
+  "Secondary_Color": "black",
+  "Material_Clue": [
+    "denim",
+    "worn fabric",
+    "ripped detail"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.3,
+  "Confidence": 0.8,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "half_body_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "lower_body",
+    "Text_Overlay_Level": "none",
+    "Outfit_Count": 1,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 2,
+    "Zipper_Type": "Unclear",
+    "Fit": "Loose",
+    "Reflective": false,
+    "Primary_Color": "blue",
+    "Secondary_Color": "black",
+    "Material_Clue": [
+      "denim",
+      "worn fabric",
+      "ripped detail"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.3,
+    "Confidence": 0.8
+  }
+}

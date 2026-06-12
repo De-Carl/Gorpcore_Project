@@ -1,0 +1,31 @@
+{
+  "Image_ID": "GRP-XHS-686b887200000000120334f2-01",
+  "note_id": "686b887200000000120334f2",
+  "image_path": "E:\\code\\Project\\Dataset\\xiaohongshu_images\\xiaohongshu_images\\机能风穿搭\\686b887200000000120334f2\\image_01.jpg",
+  "Pockets": 0,
+  "Zipper_Type": "None",
+  "Fit": "Unclear",
+  "Reflective": false,
+  "Primary_Color": "none",
+  "Secondary_Color": "none",
+  "Material_Clue": [
+    "unclear"
+  ],
+  "Scenario": "Unclear",
+  "Visual_Weight": "unclear",
+  "Gorpcore_Relevance": 0.1,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Pockets": 0,
+    "Zipper_Type": "None",
+    "Fit": "Unclear",
+    "Reflective": false,
+    "Primary_Color": "none",
+    "Secondary_Color": "none",
+    "Material_Clue": [],
+    "Scenario": "Unclear",
+    "Visual_Weight": "unclear",
+    "Gorpcore_Relevance": 0.1,
+    "Confidence": 0.9
+  }
+}

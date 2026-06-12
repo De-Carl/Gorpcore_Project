@@ -1,0 +1,53 @@
+{
+  "Image_ID": "GRP-XHS-68a59f74000000001c035930-04",
+  "note_id": "68a59f74000000001c035930",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\Gorpcore\\68a59f74000000001c035930\\image_04.webp",
+  "Curation_Status": "use",
+  "Image_Category": "full_body_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "none",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 3,
+  "Zipper_Type": "Exposed",
+  "Fit": "Loose",
+  "Reflective": false,
+  "Primary_Color": "navy blue",
+  "Secondary_Color": "olive green",
+  "Material_Clue": [
+    "ripstop",
+    "technical shell",
+    "waterproof",
+    "matte nylon"
+  ],
+  "Scenario": "Outdoor",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.95,
+  "Confidence": 0.98,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "full_body_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "none",
+    "Outfit_Count": 1,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 3,
+    "Zipper_Type": "Exposed",
+    "Fit": "Loose",
+    "Reflective": false,
+    "Primary_Color": "navy blue",
+    "Secondary_Color": "olive green",
+    "Material_Clue": [
+      "ripstop",
+      "technical shell",
+      "waterproof",
+      "matte nylon"
+    ],
+    "Scenario": "Outdoor",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.95,
+    "Confidence": 0.98
+  }
+}

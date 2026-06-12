@@ -1,0 +1,53 @@
+{
+  "Image_ID": "GRP-XHS-68afb216000000001c013882-02",
+  "note_id": "68afb216000000001c013882",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\机能风穿搭\\68afb216000000001c013882\\image_02.webp",
+  "Curation_Status": "use",
+  "Image_Category": "full_body_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "low",
+  "Outfit_Count": 2,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 6,
+  "Zipper_Type": "Exposed",
+  "Fit": "Loose",
+  "Reflective": false,
+  "Primary_Color": "olive green",
+  "Secondary_Color": "white",
+  "Material_Clue": [
+    "ripstop",
+    "nylon",
+    "shell fabric",
+    "technical"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.9,
+  "Confidence": 0.95,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "full_body_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "low",
+    "Outfit_Count": 2,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 6,
+    "Zipper_Type": "Exposed",
+    "Fit": "Loose",
+    "Reflective": false,
+    "Primary_Color": "olive green",
+    "Secondary_Color": "white",
+    "Material_Clue": [
+      "ripstop",
+      "nylon",
+      "shell fabric",
+      "technical"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.9,
+    "Confidence": 0.95
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "Image_ID": "GRP-XHS-69259203000000001e0372c2-04",
+  "note_id": "69259203000000001e0372c2",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\Gorpcore\\69259203000000001e0372c2\\image_04.webp",
+  "Curation_Status": "use",
+  "Image_Category": "full_body_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "low",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 0,
+  "Zipper_Type": "None",
+  "Fit": "Tight",
+  "Reflective": false,
+  "Primary_Color": "gray",
+  "Secondary_Color": "black",
+  "Material_Clue": [
+    "technical fabric",
+    "compression fit",
+    "matte finish"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "lightweight",
+  "Gorpcore_Relevance": 0.6,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "full_body_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "low",
+    "Outfit_Count": 1,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 0,
+    "Zipper_Type": "None",
+    "Fit": "Tight",
+    "Reflective": false,
+    "Primary_Color": "gray",
+    "Secondary_Color": "black",
+    "Material_Clue": [
+      "technical fabric",
+      "compression fit",
+      "matte finish"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "lightweight",
+    "Gorpcore_Relevance": 0.6,
+    "Confidence": 0.9
+  }
+}

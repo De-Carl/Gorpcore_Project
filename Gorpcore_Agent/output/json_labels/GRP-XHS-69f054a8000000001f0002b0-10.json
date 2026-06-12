@@ -1,0 +1,51 @@
+{
+  "Image_ID": "GRP-XHS-69f054a8000000001f0002b0-10",
+  "note_id": "69f054a8000000001f0002b0",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\机能风穿搭\\69f054a8000000001f0002b0\\image_10.webp",
+  "Curation_Status": "use",
+  "Image_Category": "detail_closeup",
+  "Reject_Reason": "none",
+  "Body_Coverage": "lower_body",
+  "Text_Overlay_Level": "none",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 0,
+  "Zipper_Type": "None",
+  "Fit": "Regular",
+  "Reflective": false,
+  "Primary_Color": "white",
+  "Secondary_Color": "none",
+  "Material_Clue": [
+    "mesh",
+    "technical fabric",
+    "foam sole"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.6,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "detail_closeup",
+    "Reject_Reason": "none",
+    "Body_Coverage": "lower_body",
+    "Text_Overlay_Level": "none",
+    "Outfit_Count": 1,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 0,
+    "Zipper_Type": "None",
+    "Fit": "Regular",
+    "Reflective": false,
+    "Primary_Color": "white",
+    "Secondary_Color": "none",
+    "Material_Clue": [
+      "mesh",
+      "technical fabric",
+      "foam sole"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.6,
+    "Confidence": 0.9
+  }
+}

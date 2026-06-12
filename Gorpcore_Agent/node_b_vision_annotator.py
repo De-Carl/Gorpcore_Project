@@ -45,6 +45,7 @@ Note:
 
 import base64
 import csv
+import argparse
 import json
 import os
 import time
@@ -938,8 +939,16 @@ if __name__ == "__main__":
         python node_b_vision_annotator.py
 
     Debugging suggestion:
-    You can change None below to 3 or 5 to run only a few images, and run in full after confirming the API is normal.
+    Run only a few images with:
 
-        run_vision_annotator(limit=5)
+        python node_b_vision_annotator.py --limit 5
     """
-    run_vision_annotator(limit=3)
+    parser = argparse.ArgumentParser(description="Run Node B visual annotation.")
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Annotate only the first N passed images. Omit this for a full run.",
+    )
+    args = parser.parse_args()
+    run_vision_annotator(limit=args.limit)

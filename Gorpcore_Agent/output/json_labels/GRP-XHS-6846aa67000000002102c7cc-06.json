@@ -1,0 +1,53 @@
+{
+  "Image_ID": "GRP-XHS-6846aa67000000002102c7cc-06",
+  "note_id": "6846aa67000000002102c7cc",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\机能风穿搭\\6846aa67000000002102c7cc\\image_06.webp",
+  "Curation_Status": "use",
+  "Image_Category": "full_body_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "medium",
+  "Outfit_Count": 2,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 4,
+  "Zipper_Type": "Exposed",
+  "Fit": "Oversized",
+  "Reflective": false,
+  "Primary_Color": "black",
+  "Secondary_Color": "gray",
+  "Material_Clue": [
+    "denim",
+    "matte nylon",
+    "ripstop",
+    "technical fabric"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.7,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "full_body_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "medium",
+    "Outfit_Count": 2,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 4,
+    "Zipper_Type": "Exposed",
+    "Fit": "Oversized",
+    "Reflective": false,
+    "Primary_Color": "black",
+    "Secondary_Color": "gray",
+    "Material_Clue": [
+      "denim",
+      "matte nylon",
+      "ripstop",
+      "technical fabric"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.7,
+    "Confidence": 0.9
+  }
+}

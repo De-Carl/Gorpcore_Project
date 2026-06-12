@@ -1,0 +1,51 @@
+{
+  "Image_ID": "GRP-XHS-69d11b3100000000220032d6-10",
+  "note_id": "69d11b3100000000220032d6",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\Gorpcore\\69d11b3100000000220032d6\\image_10.webp",
+  "Curation_Status": "reject",
+  "Image_Category": "detail_closeup",
+  "Reject_Reason": "product_only",
+  "Body_Coverage": "partial_detail",
+  "Text_Overlay_Level": "none",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 0,
+  "Zipper_Type": "None",
+  "Fit": "Unclear",
+  "Reflective": false,
+  "Primary_Color": "green",
+  "Secondary_Color": "brown",
+  "Material_Clue": [
+    "rubber",
+    "camouflage print",
+    "plastic charms"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "lightweight",
+  "Gorpcore_Relevance": 0.1,
+  "Confidence": 0.95,
+  "raw_model_output": {
+    "Curation_Status": "reject",
+    "Image_Category": "detail_closeup",
+    "Reject_Reason": "product_only",
+    "Body_Coverage": "partial_detail",
+    "Text_Overlay_Level": "none",
+    "Outfit_Count": 1,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 0,
+    "Zipper_Type": "None",
+    "Fit": "Unclear",
+    "Reflective": false,
+    "Primary_Color": "green",
+    "Secondary_Color": "brown",
+    "Material_Clue": [
+      "rubber",
+      "camouflage print",
+      "plastic charms"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "lightweight",
+    "Gorpcore_Relevance": 0.1,
+    "Confidence": 0.95
+  }
+}

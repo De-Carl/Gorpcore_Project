@@ -1,0 +1,49 @@
+{
+  "Image_ID": "GRP-XHS-683052b7000000001200122c-01",
+  "note_id": "683052b7000000001200122c",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\Gorpcore\\683052b7000000001200122c\\image_01.webp",
+  "Curation_Status": "reject",
+  "Image_Category": "text_overlay_outfit",
+  "Reject_Reason": "text_dominant",
+  "Body_Coverage": "upper_body",
+  "Text_Overlay_Level": "high",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "partial",
+  "Pockets": 0,
+  "Zipper_Type": "Unclear",
+  "Fit": "Unclear",
+  "Reflective": false,
+  "Primary_Color": "yellow",
+  "Secondary_Color": "red",
+  "Material_Clue": [
+    "nylon",
+    "technical fabric"
+  ],
+  "Scenario": "Outdoor",
+  "Visual_Weight": "unclear",
+  "Gorpcore_Relevance": 0.8,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Curation_Status": "reject",
+    "Image_Category": "text_overlay_outfit",
+    "Reject_Reason": "text_dominant",
+    "Body_Coverage": "upper_body",
+    "Text_Overlay_Level": "high",
+    "Outfit_Count": 1,
+    "Main_Subject_Visibility": "partial",
+    "Pockets": 0,
+    "Zipper_Type": "Unclear",
+    "Fit": "Unclear",
+    "Reflective": false,
+    "Primary_Color": "yellow",
+    "Secondary_Color": "red",
+    "Material_Clue": [
+      "nylon",
+      "technical fabric"
+    ],
+    "Scenario": "Outdoor",
+    "Visual_Weight": "unclear",
+    "Gorpcore_Relevance": 0.8,
+    "Confidence": 0.9
+  }
+}

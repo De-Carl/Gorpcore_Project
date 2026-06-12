@@ -1,0 +1,53 @@
+{
+  "Image_ID": "GRP-XHS-698f2ffe000000000e00e50f-01",
+  "note_id": "698f2ffe000000000e00e50f",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\Gorpcore\\698f2ffe000000000e00e50f\\image_01.webp",
+  "Curation_Status": "use",
+  "Image_Category": "full_body_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "medium",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 2,
+  "Zipper_Type": "Exposed",
+  "Fit": "Regular",
+  "Reflective": false,
+  "Primary_Color": "purple",
+  "Secondary_Color": "black",
+  "Material_Clue": [
+    "matte nylon",
+    "ripstop",
+    "shell fabric",
+    "waterproof"
+  ],
+  "Scenario": "Outdoor",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.9,
+  "Confidence": 0.95,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "full_body_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "medium",
+    "Outfit_Count": 1,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 2,
+    "Zipper_Type": "Exposed",
+    "Fit": "Regular",
+    "Reflective": false,
+    "Primary_Color": "purple",
+    "Secondary_Color": "black",
+    "Material_Clue": [
+      "matte nylon",
+      "ripstop",
+      "shell fabric",
+      "waterproof"
+    ],
+    "Scenario": "Outdoor",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.9,
+    "Confidence": 0.95
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "Image_ID": "GRP-XHS-69f9cb9c000000003501f293-07",
+  "note_id": "69f9cb9c000000003501f293",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\机能风穿搭\\69f9cb9c000000003501f293\\image_07.webp",
+  "Curation_Status": "use",
+  "Image_Category": "full_body_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "none",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 2,
+  "Zipper_Type": "Exposed",
+  "Fit": "Tight",
+  "Reflective": false,
+  "Primary_Color": "black",
+  "Secondary_Color": "none",
+  "Material_Clue": [
+    "leather",
+    "matte nylon",
+    "furry",
+    "technical fabric"
+  ],
+  "Scenario": "Fashion_Street",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.3,
+  "Confidence": 0.95,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "full_body_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "none",
+    "Outfit_Count": 1,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 2,
+    "Zipper_Type": "Exposed",
+    "Fit": "Tight",
+    "Reflective": false,
+    "Primary_Color": "black",
+    "Secondary_Color": "none",
+    "Material_Clue": [
+      "leather",
+      "matte nylon",
+      "furry",
+      "technical fabric"
+    ],
+    "Scenario": "Fashion_Street",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.3,
+    "Confidence": 0.95
+  }
+}

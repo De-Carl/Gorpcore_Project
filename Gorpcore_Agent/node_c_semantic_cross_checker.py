@@ -30,6 +30,7 @@ from config import (
     CROSS_CHECKED_RECORDS_CSV,
     JSON_LABEL_DIR,
     LEGACY_TEXT_ANALYSIS_OUTPUT_DIR,
+    LOCAL_TEXT_ANALYSIS_OUTPUT_DIR,
     QUALITY_FILTERED_CSV,
     RAW_DATA_JSON,
     SEMANTIC_CROSS_CHECK_LOG_JSON,
@@ -254,13 +255,13 @@ def write_csv(path: Path, fieldnames: Sequence[str], rows: Sequence[Dict[str, An
 # ============================================================
 
 def resolve_text_analysis_dir() -> Optional[Path]:
-    canonical_feature = TEXT_ANALYSIS_OUTPUT_DIR / "text_feature_vectors.csv"
-    legacy_feature = LEGACY_TEXT_ANALYSIS_OUTPUT_DIR / "text_feature_vectors.csv"
-
-    if canonical_feature.exists():
-        return TEXT_ANALYSIS_OUTPUT_DIR
-    if legacy_feature.exists():
-        return LEGACY_TEXT_ANALYSIS_OUTPUT_DIR
+    for text_dir in (
+        TEXT_ANALYSIS_OUTPUT_DIR,
+        LEGACY_TEXT_ANALYSIS_OUTPUT_DIR,
+        LOCAL_TEXT_ANALYSIS_OUTPUT_DIR,
+    ):
+        if (text_dir / "text_feature_vectors.csv").exists():
+            return text_dir
     return None
 
 

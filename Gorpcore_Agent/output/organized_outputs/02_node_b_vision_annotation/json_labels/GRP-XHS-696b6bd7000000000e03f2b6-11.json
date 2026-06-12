@@ -1,0 +1,51 @@
+{
+  "Image_ID": "GRP-XHS-696b6bd7000000000e03f2b6-11",
+  "note_id": "696b6bd7000000000e03f2b6",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\Gorpcore\\696b6bd7000000000e03f2b6\\image_11.webp",
+  "Curation_Status": "use",
+  "Image_Category": "detail_closeup",
+  "Reject_Reason": "none",
+  "Body_Coverage": "partial_detail",
+  "Text_Overlay_Level": "none",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 0,
+  "Zipper_Type": "None",
+  "Fit": "Unclear",
+  "Reflective": false,
+  "Primary_Color": "white",
+  "Secondary_Color": "black",
+  "Material_Clue": [
+    "mesh",
+    "technical fabric",
+    "rubber sole"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "lightweight",
+  "Gorpcore_Relevance": 0.7,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "detail_closeup",
+    "Reject_Reason": "none",
+    "Body_Coverage": "partial_detail",
+    "Text_Overlay_Level": "none",
+    "Outfit_Count": 1,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 0,
+    "Zipper_Type": "None",
+    "Fit": "Unclear",
+    "Reflective": false,
+    "Primary_Color": "white",
+    "Secondary_Color": "black",
+    "Material_Clue": [
+      "mesh",
+      "technical fabric",
+      "rubber sole"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "lightweight",
+    "Gorpcore_Relevance": 0.7,
+    "Confidence": 0.9
+  }
+}

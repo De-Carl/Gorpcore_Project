@@ -1,0 +1,53 @@
+{
+  "Image_ID": "GRP-XHS-69fda804000000001e00d51b-01",
+  "note_id": "69fda804000000001e00d51b",
+  "image_path": "E:\\code\\Project\\Dataset\\xhs\\xiaohongshu_images\\机能风穿搭\\69fda804000000001e00d51b\\image_01.webp",
+  "Curation_Status": "use",
+  "Image_Category": "full_body_outfit",
+  "Reject_Reason": "none",
+  "Body_Coverage": "full_body",
+  "Text_Overlay_Level": "low",
+  "Outfit_Count": 1,
+  "Main_Subject_Visibility": "clear",
+  "Pockets": 2,
+  "Zipper_Type": "Exposed",
+  "Fit": "Tight",
+  "Reflective": false,
+  "Primary_Color": "black",
+  "Secondary_Color": "none",
+  "Material_Clue": [
+    "nylon",
+    "technical fabric",
+    "matte finish",
+    "camouflage print"
+  ],
+  "Scenario": "Urban_Commute",
+  "Visual_Weight": "medium",
+  "Gorpcore_Relevance": 0.75,
+  "Confidence": 0.9,
+  "raw_model_output": {
+    "Curation_Status": "use",
+    "Image_Category": "full_body_outfit",
+    "Reject_Reason": "none",
+    "Body_Coverage": "full_body",
+    "Text_Overlay_Level": "low",
+    "Outfit_Count": 1,
+    "Main_Subject_Visibility": "clear",
+    "Pockets": 2,
+    "Zipper_Type": "Exposed",
+    "Fit": "Tight",
+    "Reflective": false,
+    "Primary_Color": "black",
+    "Secondary_Color": "none",
+    "Material_Clue": [
+      "nylon",
+      "technical fabric",
+      "matte finish",
+      "camouflage print"
+    ],
+    "Scenario": "Urban_Commute",
+    "Visual_Weight": "medium",
+    "Gorpcore_Relevance": 0.75,
+    "Confidence": 0.9
+  }
+}
