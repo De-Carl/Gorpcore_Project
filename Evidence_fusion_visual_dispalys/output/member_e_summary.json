@@ -1,0 +1,50 @@
+{
+  "module": "Member E - Evidence Fusion and Visual Displays",
+  "input_files": {
+    "image_index_csv": "Gorpcore_Agent/output/image_index.csv",
+    "quality_filtered_csv": "Gorpcore_Agent/output/quality_filtered_images.csv",
+    "json_label_dir": "Gorpcore_Agent/output/json_labels",
+    "text_feature_csv": "Gorpcore_Agent/text_analysis/output/text_analysis/text_feature_vectors.csv",
+    "pain_point_csv": "Gorpcore_Agent/text_analysis/output/text_analysis/pain_point_table.csv",
+    "word_frequency_csv": "Gorpcore_Agent/text_analysis/output/text_analysis/word_frequency.csv"
+  },
+  "input_counts": {
+    "image_index_rows": 1077,
+    "quality_rows": 1077,
+    "passed_images": 946,
+    "node_b_json_labels": 3,
+    "text_feature_rows": 39602,
+    "pain_point_rows": 120
+  },
+  "output_counts": {
+    "color_features_rows": 946,
+    "component_summary_rows": 946,
+    "feature_database_rows": 946,
+    "text_matched_image_rows": 497
+  },
+  "color_extraction_status": {
+    "ok": 946
+  },
+  "component_source_breakdown": {
+    "text_heuristic": 198,
+    "unknown": 748
+  },
+  "outputs": {
+    "color_features_csv": "Evidence_fusion_visual_dispalys/output/color_features.csv",
+    "component_summary_csv": "Evidence_fusion_visual_dispalys/output/component_summary.csv",
+    "feature_database_csv": "Evidence_fusion_visual_dispalys/output/feature_database.csv",
+    "figures": [
+      "Evidence_fusion_visual_dispalys/output/fig_color_distribution.png",
+      "Evidence_fusion_visual_dispalys/output/fig_scene_distribution.png",
+      "Evidence_fusion_visual_dispalys/output/fig_fit_distribution.png",
+      "Evidence_fusion_visual_dispalys/output/fig_painpoint_distribution.png",
+      "Evidence_fusion_visual_dispalys/output/fig_visual_weight_painpoint.png",
+      "Evidence_fusion_visual_dispalys/output/fig_visual_wordcloud.png"
+    ]
+  },
+  "limitations": [
+    "Node B visual labels currently cover only the available JSON files; full-image component detection is not claimed.",
+    "Component fields without visual labels use text heuristics or remain unknown.",
+    "Visual weight x pain point is an early-insight/demo chart because image-level visual weight coverage is limited."
+  ]
+}
