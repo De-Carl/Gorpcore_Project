@@ -1,0 +1,34 @@
+﻿section,label,value
+final_image_category,Full-body outfit,459
+final_image_category,Multi-panel outfit,145
+final_image_category,Half-body outfit,94
+final_image_category,Detail close-up,11
+final_primary_color,Black,282
+final_primary_color,White,115
+final_primary_color,Gray,113
+final_primary_color,Olive green,38
+final_primary_color,Beige,25
+final_primary_color,Blue,19
+final_primary_color,Brown,18
+final_primary_color,Yellow,16
+final_primary_color,Green,12
+final_primary_color,Purple,10
+final_primary_color,Light blue,10
+final_primary_color,Navy blue,9
+final_primary_color,camouflage,6
+final_primary_color,lavender,6
+final_primary_color,silver,5
+final_scenario,Urban commute,513
+final_scenario,Outdoor,177
+final_scenario,Fashion street,18
+final_scenario,Sports,1
+pain_point,High price,68
+pain_point,Poor breathability,29
+pain_point,Not commute-friendly,8
+pain_point,Poor durability,5
+pain_point,Too heavy,5
+pain_point,Poor fit,4
+pain_point,Zipper issues,1
+sentiment,neutral,36563
+sentiment,positive,2698
+sentiment,negative,341
