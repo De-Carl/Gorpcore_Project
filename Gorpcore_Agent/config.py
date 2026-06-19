@@ -8,9 +8,10 @@
 后续 Node A / Node B / Node C / Node D 都应该优先从这里读取配置，
 避免每个脚本里重复写路径，方便统一修改和维护。
 
-当前项目目录大致为：
+项目根目录由 config.py 的位置自动推导（见下方 PROJECT_ROOT），
+因此整个仓库是可移植的，不依赖任何绝对路径。目录结构大致为：
 
-E:/code/Project/
+Gorpcore_Project/
   Dataset/
     xhs/
       xiaohongshu_with_images.json

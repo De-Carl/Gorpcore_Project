@@ -1,3 +1,6 @@
 
 __pycache__/
 *.pyc
+
+# Secrets — never commit login/session state (see docs/ETHICS_AND_RISK.md §2.2)
+Dataset/xhs/xiaohongshu_auth_state.json
